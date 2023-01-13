@@ -12,7 +12,19 @@ class Server {
             auth: {
                 path: '/api/auth',
                 route: '../routes/auth',
-            }
+            },
+            especialidades: {
+                path: '/api/especialidades',
+                route: '../routes/especialidades',
+            },
+            tags: {
+                path: '/api/tags',
+                route: '../routes/tags',
+            },
+            usuarios: {
+                path: '/api/usuarios',
+                route: '../routes/usuarios',
+            },
         }
 
         this.connectToDB();

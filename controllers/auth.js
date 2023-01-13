@@ -9,8 +9,6 @@ const crearUsuario = async (req, res = express.request) => {
 
         let usuario = await Usuario.findOne({email});
 
-        console.log( usuario )
-
         if ( usuario ) {
             return res.status(400).json({
                 ok: false,
@@ -23,14 +21,14 @@ const crearUsuario = async (req, res = express.request) => {
         usuario.password = bcrypt.hashSync(password, salt);
         await usuario.save();
 
-        res.status(200).json({
+        return res.status(201).json({
             ok: true,
             usuario
         })
     } catch(error) {
-        res.status(500).json({
+        return res.status(500).json({
             ok: false,
-            error
+            message: 'Internal Error'
         })
     }    
 }
@@ -39,13 +37,14 @@ const loginUsuario = async(req, res = express.request) => {
     const {email, password} = req.body;
     try {
 
-        const usuario = await Usuario.findOne({email: email});
+        const usuario = await Usuario.findOne({email});
         if ( !usuario ) {
             return res.status(400).json({
                 ok: false,
                 msg: 'El correo no se encuentra registrado'
             })
         }
+
 
         const passwowrdValid = bcrypt.compareSync(password, usuario.password);
         if ( !passwowrdValid ) {
@@ -56,8 +55,9 @@ const loginUsuario = async(req, res = express.request) => {
         }
 
         const token = await( generarJWT( usuario.distinct, usuario.name ) );
+        console.log('first')
 
-        res.status(200).json({
+        return res.status(200).json({
             ok: true,
             usuario,
             token
@@ -66,7 +66,7 @@ const loginUsuario = async(req, res = express.request) => {
     } catch(error) {
         res.status(500).json({
             ok: false,
-            error
+            message: 'Internal Error'
         })
     }   
 }
