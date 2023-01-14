@@ -1,6 +1,10 @@
 const { Schema, model } = require("mongoose");
 
 const UsuarioSchema = Schema({
+    rol: {
+        type: String,
+        require: true
+    },
     name: {
         type: String,
         require: true
@@ -11,6 +15,10 @@ const UsuarioSchema = Schema({
         unique: true
     },
     password: {
+        type: String,
+        require: true
+    },
+    estado: {
         type: String,
         require: true
     }

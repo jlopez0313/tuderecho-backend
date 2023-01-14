@@ -21,9 +21,12 @@ const crearUsuario = async (req, res = express.request) => {
         usuario.password = bcrypt.hashSync(password, salt);
         await usuario.save();
 
+        const token = await( generarJWT( usuario.id, usuario.email ) );
+
         return res.status(201).json({
             ok: true,
-            usuario
+            usuario,
+            token
         })
     } catch(error) {
         return res.status(500).json({
@@ -54,9 +57,8 @@ const loginUsuario = async(req, res = express.request) => {
             })
         }
 
-        const token = await( generarJWT( usuario.distinct, usuario.name ) );
-        console.log('first')
-
+        const token = await( generarJWT( usuario.id, usuario.email ) );
+        
         return res.status(200).json({
             ok: true,
             usuario,
@@ -72,9 +74,9 @@ const loginUsuario = async(req, res = express.request) => {
 }
 
 const revalidarToken = async (req, res = express.request) => {
-    const {uid, name} = req;
+    const {uid, email} = req;
 
-    const token = await( generarJWT( uid, name ) );
+    const token = await( generarJWT( uid, email ) );
 
     res.status(200).json({
         ok: true,

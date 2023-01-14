@@ -1,5 +1,6 @@
 const express = require('express');
 const { generarJWT } = require('../helpers/jwt');
+const Perfil = require('../models/Perfil');
 const Usuario = require('../models/Usuario');
 
 const create = async (req, res = express.request) => {
@@ -58,12 +59,16 @@ const find = async(req, res = express.request) => {
             })    
         }
 
+        const perfil = await Perfil.findOne({ user: usuario.id }).populate('tags', 'name');
+
         return res.status(200).json({
             ok: true,
-            usuario
+            usuario,
+            perfil
         })
 
     } catch(error) {
+        console.log('Error', error);
         res.status(500).json({
             ok: false,
             message: 'Internal Error'
@@ -72,10 +77,8 @@ const find = async(req, res = express.request) => {
 }
 
 const update = async (req, res = express.request) => {
-    const { name } = req.body;
-
     try {
-        const usuario = await Usuario.findByIdAndUpdate(req.params.id, {name});
+        const usuario = await Usuario.findByIdAndUpdate(req.params.id, req.body);
         if ( !usuario) {
             return res.status(404).json({
                 ok: false,
@@ -83,12 +86,69 @@ const update = async (req, res = express.request) => {
             })    
         }
 
+        const {
+            identificacion,
+            pais,
+            biografia,
+            tarjeta_profesional,
+            region,
+            especialidad,
+            ciudad,
+            telefono,
+            cuenta,
+            estudiante,
+            decreto176,
+            tags
+        } = req.body;
+
+        let perfil = await Perfil.findOneAndUpdate(
+            { 
+                user: req.params.id 
+            },
+            { 
+                identificacion,
+                pais,
+                biografia,
+                especialidad,
+                tarjeta_profesional,
+                region,
+                ciudad,
+                telefono,
+                cuenta,
+                estudiante,
+                decreto176,
+                tags 
+            }
+        )
+
+        if ( !perfil) {
+            perfil = new Perfil({ 
+                user: req.params.id,
+                identificacion,
+                pais,
+                biografia,
+                especialidad,
+                tarjeta_profesional,
+                region,
+                ciudad,
+                telefono,
+                cuenta,
+                estudiante,
+                decreto176,
+                tags 
+            })
+
+            perfil = await perfil.save();
+        }
+
         return res.status(200).json({
             ok: true,
-            usuario
+            usuario,
+            perfil
         })
 
     } catch(error) {
+        console.log( 'error', error )
         res.status(500).json({
             ok: false,
             message: 'Internal Error'
