@@ -7,7 +7,8 @@ const PerfilSchema = Schema({
     },
     especialidad: {
         type: Schema.Types.ObjectId,
-        ref: 'Especialidad'
+        ref: 'Especialidad',
+        required: false
     },
     tarjeta_profesional: {
         type: String,
@@ -48,10 +49,13 @@ const PerfilSchema = Schema({
         type: String,
         require: true
     },
+    photo: {
+        type: String,
+    },
     tags: {
         type: [Schema.Types.ObjectId],
         ref: 'Tag',
-        require: true
+        require: false
     }
 })
 

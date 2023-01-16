@@ -98,6 +98,7 @@ const update = async (req, res = express.request) => {
             cuenta,
             estudiante,
             decreto176,
+            photo,
             tags
         } = req.body;
 
@@ -117,6 +118,7 @@ const update = async (req, res = express.request) => {
                 cuenta,
                 estudiante,
                 decreto176,
+                photo,
                 tags 
             }
         )
@@ -135,6 +137,7 @@ const update = async (req, res = express.request) => {
                 cuenta,
                 estudiante,
                 decreto176,
+                photo,
                 tags 
             })
 

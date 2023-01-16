@@ -21,7 +21,7 @@ const crearUsuario = async (req, res = express.request) => {
         usuario.password = bcrypt.hashSync(password, salt);
         await usuario.save();
 
-        const token = await( generarJWT( usuario.id, usuario.email ) );
+        const token = await( generarJWT( usuario.id, usuario.email, usuario.rol ) );
 
         return res.status(201).json({
             ok: true,
@@ -57,7 +57,7 @@ const loginUsuario = async(req, res = express.request) => {
             })
         }
 
-        const token = await( generarJWT( usuario.id, usuario.email ) );
+        const token = await( generarJWT( usuario.id, usuario.email, usuario.rol ) );
         
         return res.status(200).json({
             ok: true,
@@ -66,6 +66,7 @@ const loginUsuario = async(req, res = express.request) => {
         })
 
     } catch(error) {
+        console.log( error )
         res.status(500).json({
             ok: false,
             message: 'Internal Error'
@@ -74,9 +75,9 @@ const loginUsuario = async(req, res = express.request) => {
 }
 
 const revalidarToken = async (req, res = express.request) => {
-    const {uid, email} = req;
+    const {uid, email, rol} = req;
 
-    const token = await( generarJWT( uid, email ) );
+    const token = await( generarJWT( uid, email, rol ) );
 
     res.status(200).json({
         ok: true,
