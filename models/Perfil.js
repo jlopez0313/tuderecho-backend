@@ -12,32 +12,31 @@ const PerfilSchema = Schema({
     },
     tarjeta_profesional: {
         type: String,
-        require: true
+        required: false
     },
     biografia: {
         type: String,
-        require: true
+        required: false
     },
     identificacion: {
         type: String,
-        require: true
+        required: false
     },
     pais: {
         type: String,
-        require: true
+        required: false
     },
     region: {
         type: String,
-        require: true,
-        unique: true
+        required: false,
     },
     ciudad: {
         type: String,
-        require: true
+        required: false
     },
     telefono: {
         type: String,
-        require: true
+        required: false
     },
     estudiante: {
         type: String
@@ -47,7 +46,7 @@ const PerfilSchema = Schema({
     },
     cuenta: {
         type: String,
-        require: true
+        required: false
     },
     photo: {
         type: String,
@@ -55,7 +54,7 @@ const PerfilSchema = Schema({
     tags: {
         type: [Schema.Types.ObjectId],
         ref: 'Tag',
-        require: false
+        required: false
     }
 })
 

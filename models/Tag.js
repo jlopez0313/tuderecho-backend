@@ -3,7 +3,7 @@ const { Schema, model } = require("mongoose");
 const TagSchema = Schema({
     name: {
         type: String,
-        require: true
+        required: true
     }
 })
 
