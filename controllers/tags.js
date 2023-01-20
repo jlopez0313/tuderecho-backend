@@ -74,7 +74,7 @@ const update = async (req, res = express.request) => {
     const { name } = req.body;
 
     try {
-        const tag = await Tag.findByIdAndUpdate(req.params.id, {name});
+        const tag = await Tag.findByIdAndUpdate(req.params.id, {name}, { new: true });
         if ( !tag) {
             return res.status(404).json({
                 ok: false,

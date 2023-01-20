@@ -75,7 +75,7 @@ const update = async (req, res = express.request) => {
     const { name } = req.body;
 
     try {
-        const especialidad = await Especialidad.findByIdAndUpdate(req.params.id, {name});
+        const especialidad = await Especialidad.findByIdAndUpdate(req.params.id, {name}, { new: true });
         if ( !especialidad) {
             return res.status(404).json({
                 ok: false,

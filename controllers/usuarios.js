@@ -2,6 +2,8 @@ const express = require('express');
 const { generarJWT } = require('../helpers/jwt');
 const Perfil = require('../models/Perfil');
 const Usuario = require('../models/Usuario');
+const base64Img = require('base64-img');
+const { unlink } = require('fs/promises');
 
 const create = async (req, res = express.request) => {
     const { name } = req.body;
@@ -60,11 +62,19 @@ const find = async(req, res = express.request) => {
         }
 
         const perfil = await Perfil.findOne({ user: usuario.id }).populate('tags', 'name');
+        let oldImage = '';
+        if ( perfil ) {
+            oldImage = perfil.photo
+            if ( usuario.provider === 'WEB' ) {
+                perfil.photo = `${process.env.URL}/${perfil.photo}`
+            }
+        }
 
         return res.status(200).json({
             ok: true,
             usuario,
-            perfil
+            perfil,
+            oldImage
         })
 
     } catch(error) {
@@ -99,9 +109,16 @@ const update = async (req, res = express.request) => {
             estudiante,
             decreto176,
             photo,
-            tags
+            tags,
+            oldImage
         } = req.body;
 
+        let imageUrl = oldImage;
+
+        if ( `${process.env.URL}/${oldImage}` !== photo ) {
+            imageUrl = await uploadFile( photo, oldImage );
+        }
+        
         let perfil = await Perfil.findOneAndUpdate(
             { 
                 user: req.params.id 
@@ -118,11 +135,12 @@ const update = async (req, res = express.request) => {
                 cuenta,
                 estudiante,
                 decreto176,
-                photo,
+                photo: imageUrl,
                 tags 
-            }
+            },
+            { new: true }
         )
-
+        
         if ( !perfil) {
             perfil = new Perfil({ 
                 user: req.params.id,
@@ -137,17 +155,20 @@ const update = async (req, res = express.request) => {
                 cuenta,
                 estudiante,
                 decreto176,
-                photo,
+                photo: imageUrl,
                 tags 
             })
 
             perfil = await perfil.save();
         }
 
+        perfil.photo = `${process.env.URL}/${perfil.photo}`
+
         return res.status(200).json({
             ok: true,
             usuario,
-            perfil
+            perfil,
+            oldImage: imageUrl
         })
 
     } catch(error) {
@@ -179,6 +200,45 @@ const remove = async(req, res = express.request) => {
             message: 'Internal Error'
         })
     } 
+}
+
+const uploadFile = ( strImage, oldImage ) => {
+    return new Promise( async (resolve, reject) => {
+        const folderPath = './public';
+        try {
+            await oldImage && unlink( `${folderPath}/${oldImage}` );
+        } catch( err ) {
+            console.log( err );
+        } finally {
+            try {
+                uploadBase64(strImage, resolve, reject)
+            } catch(err) {
+                resolve(strImage)
+            }
+        }
+    })
+}
+
+const uploadBase64 = (strImage, resolve, reject) => {
+    base64Img.img(strImage, './public', Date.now(), function(err, path) {
+        if (err ){
+            console.log('error', error)
+            reject( err )
+        }
+        const fileName = path.split('/').pop().split('\\').pop();
+        resolve(fileName);
+    })
+}
+
+const uploadfromUrl = (photoUrl, resolve, reject) => {
+    base64Img.requestBase64(photoUrl, function(error, res, body) {
+        if ( error ) {
+            console.log('error', error)
+            reject( err )
+        }
+
+        resolve(body);
+    })
 }
 
 module.exports = {
