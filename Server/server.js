@@ -2,7 +2,6 @@ const express = require('express');
 require('dotenv').config();
 const { dbConnection } = require('../database/config');
 const cors = require('cors');
-const base64Img = require('base64-img');
 const bodyParser = require('body-parser');
 
 class Server {

@@ -2,9 +2,10 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const Usuario = require('../models/Usuario');
 const { generarJWT } = require('../helpers/jwt');
+const { sendEmail } = require('../helpers/mailer');
 
 const crearUsuario = async (req, res = express.request) => {
-    const {name, email, password} = req.body;
+    const {name, email, password, provider} = req.body;
     try {
 
         let usuario = await Usuario.findOne({email});
@@ -23,12 +24,17 @@ const crearUsuario = async (req, res = express.request) => {
 
         const token = await( generarJWT( usuario.id, usuario.email, usuario.rol ) );
 
+        if ( provider === 'GMAIL' ) {
+            sendEmail(email, 'Bienvenido!', 'Mensaje de bienvenida a Tu Derecho!')
+        }
+
         return res.status(201).json({
             ok: true,
             usuario,
             token
         })
     } catch(error) {
+        console.log( error )
         return res.status(500).json({
             ok: false,
             message: 'Internal Error'

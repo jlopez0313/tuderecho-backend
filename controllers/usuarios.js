@@ -97,19 +97,7 @@ const update = async (req, res = express.request) => {
         }
 
         const {
-            identificacion,
-            pais,
-            biografia,
-            tarjeta_profesional,
-            region,
-            especialidad,
-            ciudad,
-            telefono,
-            cuenta,
-            estudiante,
-            decreto176,
             photo,
-            tags,
             oldImage
         } = req.body;
 
@@ -124,19 +112,8 @@ const update = async (req, res = express.request) => {
                 user: req.params.id 
             },
             { 
-                identificacion,
-                pais,
-                biografia,
-                especialidad,
-                tarjeta_profesional,
-                region,
-                ciudad,
-                telefono,
-                cuenta,
-                estudiante,
-                decreto176,
+                ...req.body,
                 photo: imageUrl,
-                tags 
             },
             { new: true }
         )
@@ -144,19 +121,8 @@ const update = async (req, res = express.request) => {
         if ( !perfil) {
             perfil = new Perfil({ 
                 user: req.params.id,
-                identificacion,
-                pais,
-                biografia,
-                especialidad,
-                tarjeta_profesional,
-                region,
-                ciudad,
-                telefono,
-                cuenta,
-                estudiante,
-                decreto176,
+                ...req.body,
                 photo: imageUrl,
-                tags 
             })
 
             perfil = await perfil.save();

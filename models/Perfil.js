@@ -18,6 +18,10 @@ const PerfilSchema = Schema({
         type: String,
         required: false
     },
+    tipoDoc: {
+        type: String,
+        required: false
+    },
     identificacion: {
         type: String,
         required: false
