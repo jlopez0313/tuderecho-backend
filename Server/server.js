@@ -38,7 +38,13 @@ class Server {
     }
 
     addMiddlewares() {
-        this.app.use( cors() );
+        const corsOptions = {
+            origin: '*',
+            optionsSuccessStatus: 200, // For legacy browser support
+            methods: "GET, PUT, POST, PATCH, DELETE",
+        }
+
+        this.app.use( cors(corsOptions) );
         this.app.use( express.static('public') )
         this.app.use( bodyParser.json({ limit: '50mb' }) );
     }
