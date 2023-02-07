@@ -44,7 +44,7 @@ class Server {
             methods: "GET, PUT, POST, PATCH, DELETE",
         }
 
-        this.app.use( cors(corsOptions) );
+        this.app.use( cors() );
         this.app.use( express.static('public') )
         this.app.use( bodyParser.json({ limit: '50mb' }) );
     }
