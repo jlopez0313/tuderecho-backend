@@ -3,7 +3,6 @@ const { generarJWT } = require('../helpers/jwt');
 const Perfil = require('../models/Perfil');
 const Usuario = require('../models/Usuario');
 const base64Img = require('base64-img');
-const { unlink } = require('fs/promises');
 const fs = require('fs')
 
 const create = async (req, res = express.request) => {
@@ -173,7 +172,10 @@ const uploadFile = ( strImage, oldImage ) => {
     return new Promise( async (resolve, reject) => {
         const folderPath = './public';
         try {
-            await oldImage && fs.existsSync(`${folderPath}/${oldImage}`) && unlink( `${folderPath}/${oldImage}` );
+            await 
+                oldImage && 
+                fs.existsSync(`${folderPath}/${oldImage}`) &&
+                fs.unlink( `${folderPath}/${oldImage}` );
         } catch( err ) {
             console.log( 'No existe la imagen', err );
         } finally {
