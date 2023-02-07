@@ -174,7 +174,7 @@ const uploadFile = ( strImage, oldImage ) => {
         try {
             await oldImage && unlink( `${folderPath}/${oldImage}` );
         } catch( err ) {
-            console.log( err );
+            console.log( 'No existe la imagen', err );
         } finally {
             try {
                 uploadBase64(strImage, resolve, reject)
