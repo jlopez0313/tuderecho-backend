@@ -39,7 +39,7 @@ class Server {
 
     addMiddlewares() {
         const corsOptions = {
-            origin: 'https://tu-derecho.netlify.app/',
+            origin: '*',
             optionsSuccessStatus: 200, // For legacy browser support
             methods: "GET, PUT, POST, PATCH, DELETE",
         }
