@@ -37,7 +37,7 @@ const crearUsuario = async (req, res = express.request) => {
         console.log( error )
         return res.status(500).json({
             ok: false,
-            message: 'Internal Error'
+            msg: 'crearUsuario: Internal Error'
         })
     }    
 }
@@ -75,7 +75,7 @@ const loginUsuario = async(req, res = express.request) => {
         console.log( error )
         res.status(500).json({
             ok: false,
-            message: 'Internal Error'
+            msg: 'loginUsuario: Internal Error'
         })
     }   
 }

@@ -26,7 +26,7 @@ const create = async (req, res = express.request) => {
     } catch(error) {
         return res.status(500).json({
             ok: false,
-            message: 'Internal Error'
+            msg: 'create: Internal Error'
         })
     }    
 }
@@ -43,7 +43,7 @@ const list = async(req, res = express.request) => {
     } catch(error) {
         res.status(500).json({
             ok: false,
-            message: 'Internal Error'
+            msg: 'list: Internal Error'
         })
     }   
 }
@@ -53,7 +53,8 @@ const find = async(req, res = express.request) => {
         const tag = await Tag.findById(req.params.id);
         if ( !tag) {
             return res.status(404).json({
-                ok: false,
+                ok: false,                
+                msg: 'El Tag no existe'
             })    
         }
 
@@ -65,7 +66,7 @@ const find = async(req, res = express.request) => {
     } catch(error) {
         res.status(500).json({
             ok: false,
-            message: 'Internal Error'
+            msg: 'find: Internal Error'
         })
     }   
 }
@@ -90,7 +91,7 @@ const update = async (req, res = express.request) => {
     } catch(error) {
         res.status(500).json({
             ok: false,
-            message: 'Internal Error'
+            msg: 'update: Internal Error'
         })
     } 
 }
@@ -113,7 +114,7 @@ const remove = async(req, res = express.request) => {
     } catch(error) {
         res.status(500).json({
             ok: false,
-            message: 'Internal Error'
+            msg: 'remove: Internal Error'
         })
     } 
 }
