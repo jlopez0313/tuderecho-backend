@@ -1,10 +1,11 @@
 const express = require('express');
-const { generarJWT } = require('../helpers/jwt');
-const Perfil = require('../models/Perfil');
-const Usuario = require('../models/Usuario');
-const base64Img = require('base64-img');
-const fs = require('fs')
 const { sendEmail } = require('../helpers/mailer');
+const { generarJWT } = require('../helpers/jwt');
+const Usuario = require('../models/Usuario');
+const Perfil = require('../models/Perfil');
+const base64Img = require('base64-img');
+const bcrypt = require('bcryptjs');
+const fs = require('fs')
 
 const recovery = async (req, res = express.request) => {
     const {email} = req.body;
