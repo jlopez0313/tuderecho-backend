@@ -64,8 +64,7 @@ const passwords = async (req, res = express.request) => {
         
         return res.status(201).json({
             ok: true,
-            usuario,
-            token
+            msg: 'Tu cambio de contraseña fue satisfactorio'
         })
 
     } catch(error) {
