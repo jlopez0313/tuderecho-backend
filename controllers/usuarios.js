@@ -20,6 +20,10 @@ const recovery = async (req, res = express.request) => {
         }
 
         sendEmail(email, 'Olvidaste tu contraseña!', 'Bla bla bla...')
+        return res.status(201).json({
+            ok: true,
+            msg: 'Email sent !!'
+        })
 
     } catch(error) {
         console.log( error )
