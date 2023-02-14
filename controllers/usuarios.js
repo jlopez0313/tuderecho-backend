@@ -36,7 +36,7 @@ const recovery = async (req, res = express.request) => {
 }
 
 const passwords = async (req, res = express.request) => {
-    const {password1, email} = req.body;
+    const {password, password1, email} = req.body;
     try {
 
         let usuario = await Usuario.findOne({email});
@@ -60,13 +60,14 @@ const passwords = async (req, res = express.request) => {
         usuario.password = bcrypt.hashSync(password1, salt);
         await usuario.save();
 
-        sendEmail(email, 'Tu contraseña ha cambiado!', 'Tu proceso de cambio de contraseña fue satisfactorio!')
+        sendEmail(email, 'Tu contraseña ha cambiado!', 'Tu cambio de contraseña fue satisfactorio!')
         
         return res.status(201).json({
             ok: true,
             usuario,
             token
         })
+
     } catch(error) {
         console.log( error )
         return res.status(500).json({
