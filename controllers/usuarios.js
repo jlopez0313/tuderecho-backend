@@ -4,6 +4,7 @@ const Perfil = require('../models/Perfil');
 const Usuario = require('../models/Usuario');
 const base64Img = require('base64-img');
 const fs = require('fs')
+const { sendEmail } = require('../helpers/mailer');
 
 const recovery = async (req, res = express.request) => {
     const {email} = req.body;
@@ -24,7 +25,7 @@ const recovery = async (req, res = express.request) => {
         console.log( error )
         return res.status(500).json({
             ok: false,
-            msg: 'passwords: Internal Error'
+            msg: 'recovery: Internal Error'
         })
     }  
 }
