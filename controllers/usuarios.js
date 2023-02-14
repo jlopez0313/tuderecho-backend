@@ -5,6 +5,71 @@ const Usuario = require('../models/Usuario');
 const base64Img = require('base64-img');
 const fs = require('fs')
 
+const recovery = async (req, res = express.request) => {
+    const {email} = req.body;
+    try {
+
+        let usuario = await Usuario.findOne({email});
+
+        if ( !usuario ) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'El correo no se encuentra registrado'
+            })
+        }
+
+        sendEmail(email, 'Olvidaste tu contraseña!', 'Bla bla bla...')
+
+    } catch(error) {
+        console.log( error )
+        return res.status(500).json({
+            ok: false,
+            msg: 'passwords: Internal Error'
+        })
+    }  
+}
+
+const passwords = async (req, res = express.request) => {
+    const {password1, email} = req.body;
+    try {
+
+        let usuario = await Usuario.findOne({email});
+
+        if ( !usuario ) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'El correo no se encuentra registrado'
+            })
+        }
+
+        const passwowrdValid = bcrypt.compareSync(password, usuario.password);
+        if ( !passwowrdValid ) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'El password actual no es valido'
+            })
+        }
+
+        const salt = bcrypt.genSaltSync();
+        usuario.password = bcrypt.hashSync(password1, salt);
+        await usuario.save();
+
+        sendEmail(email, 'Tu contraseña ha cambiado!', 'Tu proceso de cambio de contraseña fue satisfactorio!')
+        
+        return res.status(201).json({
+            ok: true,
+            usuario,
+            token
+        })
+    } catch(error) {
+        console.log( error )
+        return res.status(500).json({
+            ok: false,
+            msg: 'passwords: Internal Error'
+        })
+    }    
+}
+
 const create = async (req, res = express.request) => {
     const { name } = req.body;
     const usuario = new Usuario( req.body );
@@ -211,6 +276,8 @@ const uploadfromUrl = (photoUrl, resolve, reject) => {
 }
 
 module.exports = {
+    recovery,
+    passwords,
     create,
     update,
     find,
