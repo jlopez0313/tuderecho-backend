@@ -46,7 +46,7 @@ const loginUsuario = async(req, res = express.request) => {
     const {email, password} = req.body;
     try {
 
-        const usuario = await Usuario.findOne({email});
+        const usuario = await Usuario.findOne({email}).populate('Perfil');
         if ( !usuario ) {
             return res.status(400).json({
                 ok: false,
