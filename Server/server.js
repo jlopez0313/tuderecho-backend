@@ -22,6 +22,10 @@ class Server {
                 path: '/api/tags',
                 route: '../routes/tags',
             },
+            publicaciones: {
+                path: '/api/publicaciones',
+                route: '../routes/publicaciones',
+            },
             usuarios: {
                 path: '/api/usuarios',
                 route: '../routes/usuarios',
