@@ -22,7 +22,14 @@ const create = async (req, res = express.request) => {
 
 const list = async(req, res = express.request) => {
     try {
-        const publicaciones = await Publicacion.find();
+        const publicaciones = await Publicacion.find().populate(
+            {
+                path : 'user',
+                populate : {
+                  path : 'perfil'
+                }
+            }
+        ).sort( { fecha: -1 } )
 
         return res.status(200).json({
             ok: true,
@@ -30,6 +37,7 @@ const list = async(req, res = express.request) => {
         })
 
     } catch(error) {
+        console.log( error )
         res.status(500).json({
             ok: false,
             msg: 'list: Internal Error'

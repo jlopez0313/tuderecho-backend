@@ -124,7 +124,7 @@ const list = async(req, res = express.request) => {
 
 const find = async(req, res = express.request) => {
     try {
-        const usuario = await Usuario.findById(req.params.id);
+        const usuario = await Usuario.findById(req.params.id).populate('perfil').lean();
         if ( !usuario) {
             return res.status(404).json({
                 ok: false,
@@ -132,20 +132,13 @@ const find = async(req, res = express.request) => {
             })    
         }
 
-        const perfil = await Perfil.findOne({ user: usuario.id }).populate('tags', 'name');
-        let oldImage = '';
-        if ( perfil ) {
-            oldImage = perfil.photo
-            if ( usuario.provider === 'WEB' ) {
-                perfil.photo = `${process.env.URL}/${perfil.photo}`
-            }
+        if ( usuario.perfil ) {
+            usuario.perfil.oldImage = usuario.perfil.photo;            
         }
 
         return res.status(200).json({
             ok: true,
-            usuario,
-            perfil,
-            oldImage
+            usuario
         })
 
     } catch(error) {
@@ -170,11 +163,11 @@ const update = async (req, res = express.request) => {
         const {
             photo,
             oldImage
-        } = req.body;
+        } = req.body.perfil;
 
         let imageUrl = oldImage;
 
-        if ( `${process.env.URL}/${oldImage}` !== photo ) {
+        if ( oldImage !== photo ) {
             imageUrl = await uploadFile( photo, oldImage );
         }
         
@@ -183,7 +176,7 @@ const update = async (req, res = express.request) => {
                 user: req.params.id 
             },
             { 
-                ...req.body,
+                ...req.body.perfil,
                 photo: imageUrl,
             },
             { new: true }
@@ -192,20 +185,19 @@ const update = async (req, res = express.request) => {
         if ( !perfil) {
             perfil = new Perfil({ 
                 user: req.params.id,
-                ...req.body,
-                photo: imageUrl,
+                ...req.body.perfil,
+                photo: imageUrl
             })
 
             perfil = await perfil.save();
         }
 
-        perfil.photo = `${process.env.URL}/${perfil.photo}`
-
+        usuario.perfil = {...perfil};
+        usuario.perfil.oldImage = imageUrl
+        
         return res.status(200).json({
             ok: true,
-            usuario,
-            perfil,
-            oldImage: imageUrl
+            usuario
         })
 
     } catch(error) {
@@ -240,15 +232,29 @@ const remove = async(req, res = express.request) => {
 }
 
 const uploadFile = ( strImage, oldImage ) => {
+
+    
+    
     return new Promise( async (resolve, reject) => {
         const folderPath = './public';
-        try {
-            await 
-                oldImage && 
-                fs.existsSync(`${folderPath}/${oldImage}`) &&
-                fs.unlink( `${folderPath}/${oldImage}` );
+        try {            
+            if (oldImage)  {
+                const erasingImage = oldImage?.split('/').pop()            
+                const existe = await fs.existsSync(`${folderPath}/${erasingImage}`)
+                if ( existe ) {
+                    fs.unlink( `${folderPath}/${erasingImage}`, (error) => {
+                        if ( error ) {
+                            console.log( 'Error eliminando', `${folderPath}/${erasingImage}` )
+                            throw new Error('Error eliminando');
+                        }
+                    });
+                } else {
+                    console.log( 'Imagen no existe', `${folderPath}/${erasingImage}` )
+                    throw new Error('No existe la imagen');
+                }
+            }
         } catch( err ) {
-            console.log( 'No existe la imagen', err );
+            console.log( 'No existe la imagen', oldImage, err );
         } finally {
             try {
                 uploadBase64(strImage, resolve, reject)
@@ -257,6 +263,7 @@ const uploadFile = ( strImage, oldImage ) => {
             }
         }
     })
+
 }
 
 const uploadBase64 = (strImage, resolve, reject) => {
@@ -266,7 +273,7 @@ const uploadBase64 = (strImage, resolve, reject) => {
             reject( err )
         }
         const fileName = path.split('/').pop().split('\\').pop();
-        resolve(fileName);
+        resolve(`${process.env.URL}/${fileName}`);
     })
 }
 

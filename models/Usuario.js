@@ -26,6 +26,20 @@ const UsuarioSchema = Schema({
         type: String,
         required: true
     }
+},{
+    toJSON: {
+        virtuals: true
+    },
+    toObject: {
+        virtuals: true
+    }
+})
+
+UsuarioSchema.virtual('perfil', {
+    ref: 'Perfil',
+    localField: '_id',
+    foreignField: 'user',
+    justOne: true
 })
 
 UsuarioSchema.method('toJSON', function() {

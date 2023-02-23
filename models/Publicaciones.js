@@ -13,6 +13,9 @@ const PublicacionSchema = Schema({
     },
     medias: {
         type: [String],
+    },
+    fecha: {
+        type: String,
     }
 })
 
