@@ -22,6 +22,10 @@ class Server {
                 path: '/api/tags',
                 route: '../routes/tags',
             },
+            conferencias: {
+                path: '/api/conferencias',
+                route: '../routes/conferencias',
+            },
             publicaciones: {
                 path: '/api/publicaciones',
                 route: '../routes/publicaciones',
