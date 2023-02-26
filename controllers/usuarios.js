@@ -231,10 +231,7 @@ const remove = async(req, res = express.request) => {
     } 
 }
 
-const uploadFile = ( strImage, oldImage ) => {
-
-    
-    
+const uploadFile = ( strImage, oldImage ) => {  
     return new Promise( async (resolve, reject) => {
         const folderPath = './public';
         try {            

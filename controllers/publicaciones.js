@@ -42,7 +42,7 @@ const list = async(req, res = express.request) => {
             ok: false,
             msg: 'list: Internal Error'
         })
-    }   
+    }
 }
 
 const find = async(req, res = express.request) => {

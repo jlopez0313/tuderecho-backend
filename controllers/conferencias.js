@@ -70,7 +70,7 @@ const update = async (req, res = express.request) => {
         if ( !conferencia) {
             return res.status(404).json({
                 ok: false,
-                message: 'La etiqueta no existe'
+                message: 'La conferencia no existe'
             })    
         }
 
@@ -93,7 +93,7 @@ const remove = async(req, res = express.request) => {
         if ( !conferencia) {
             return res.status(404).json({
                 ok: false,
-                message: 'La etiqueta no existe'
+                message: 'La conferencia no existe'
             })    
         }
 
