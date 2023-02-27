@@ -32,4 +32,4 @@ VideotecaSchema.method('toJSON', function() {
     return object;
 })
 
-module.exports = model('Conferencia', VideotecaSchema)
+module.exports = model('Videoteca', VideotecaSchema)
