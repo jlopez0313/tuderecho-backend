@@ -1,12 +1,12 @@
 const express = require('express');
 const { generarJWT } = require('../helpers/jwt');
-const Videoteca = require('../models/Videoteca');
+const Comunidad = require('../models/Comunidad');
 
 const create = async (req, res = express.request) => {
-    const videoteca = new Videoteca( req.body );
+    const comunidad = new Comunidad( req.body );
     try {
         
-        const saved = await videoteca.save();
+        const saved = await comunidad.save();
         return res.status(201).json({
             ok: true,
             saved
@@ -22,13 +22,13 @@ const create = async (req, res = express.request) => {
 
 const list = async(req, res = express.request) => {
     try {
-        const videoteca = await Videoteca.find()
+        const comunidades = await Comunidad.find()
             .populate('user')
             .sort( { date: -1 } )
 
         return res.status(200).json({
             ok: true,
-            videoteca
+            comunidades
         })
 
     } catch(error) {
@@ -41,17 +41,17 @@ const list = async(req, res = express.request) => {
 
 const find = async(req, res = express.request) => {
     try {
-        const videoteca = await Videoteca.findById(req.params.id);
-        if ( !videoteca) {
+        const comunidad = await Comunidad.findById(req.params.id);
+        if ( !comunidad) {
             return res.status(404).json({
                 ok: false,                
-                msg: 'La videoteca no existe'
+                msg: 'La comunidad no existe'
             })    
         }
 
         return res.status(200).json({
             ok: true,
-            videoteca
+            comunidad
         })
 
     } catch(error) {
@@ -66,17 +66,17 @@ const update = async (req, res = express.request) => {
     const { name } = req.body;
 
     try {
-        const videoteca = await Videoteca.findByIdAndUpdate(req.params.id, {name}, { new: true });
-        if ( !videoteca) {
+        const comunidad = await Comunidad.findByIdAndUpdate(req.params.id, {name}, { new: true });
+        if ( !comunidad) {
             return res.status(404).json({
                 ok: false,
-                message: 'La videoteca no existe'
+                message: 'La comunidad no existe'
             })    
         }
 
         return res.status(200).json({
             ok: true,
-            videoteca
+            comunidad
         })
 
     } catch(error) {
@@ -89,17 +89,17 @@ const update = async (req, res = express.request) => {
 
 const remove = async(req, res = express.request) => {
     try {
-        const videoteca = await Videoteca.findByIdAndDelete(req.params.id);
-        if ( !videoteca) {
+        const comunidad = await Comunidad.findByIdAndDelete(req.params.id);
+        if ( !comunidad) {
             return res.status(404).json({
                 ok: false,
-                message: 'La videoteca no existe'
+                message: 'La comunidad no existe'
             })    
         }
 
         return res.status(200).json({
             ok: true,
-            videoteca
+            comunidad
         })
 
     } catch(error) {

@@ -45,7 +45,7 @@ const find = async(req, res = express.request) => {
         if ( !conferencia) {
             return res.status(404).json({
                 ok: false,                
-                msg: 'El Conferencia no existe'
+                msg: 'La conferencia no existe'
             })    
         }
 
