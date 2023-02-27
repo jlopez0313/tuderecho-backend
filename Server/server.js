@@ -34,6 +34,10 @@ class Server {
                 path: '/api/usuarios',
                 route: '../routes/usuarios',
             },
+            videoteca: {
+                path: '/api/videoteca',
+                route: '../routes/videoteca',
+            },
         }
 
         this.connectToDB();
