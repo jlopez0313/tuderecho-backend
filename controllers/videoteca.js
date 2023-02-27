@@ -22,13 +22,13 @@ const create = async (req, res = express.request) => {
 
 const list = async(req, res = express.request) => {
     try {
-        const conferencias = await Videoteca.find()
+        const videoteca = await Videoteca.find()
             .populate('user')
             .sort( { date: -1 } )
 
         return res.status(200).json({
             ok: true,
-            conferencias
+            videoteca
         })
 
     } catch(error) {
