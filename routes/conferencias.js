@@ -2,13 +2,14 @@ const express = require('express');
 const router = express.Router();
 
 const  { check } = require('express-validator');
-const { list, find, create, update, remove } = require('../controllers/conferencias');
+const { list, myList, find, create, update, remove } = require('../controllers/conferencias');
 const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-token');
 
 router.use( validarJWT )
 
-router.get('/', list);
+router.get('/:search?', list);
+router.post('/my-list/:search?', myList);
 router.get('/:id', find);
 router.post(
     '/',

@@ -20,11 +20,75 @@ const create = async (req, res = express.request) => {
     }    
 }
 
-const list = async(req, res = express.request) => {
+const myList = async(req, res = express.request) => {
+    const { uid } = req;
+    const filter = req.params?.search || '';
+
     try {
-        const conferencias = await Conferencia.find()
-            .populate('user')
-            .sort( { date: -1 } )
+        const conferencias = await Conferencia.find(
+            { 
+                
+                $or: [
+                    {
+                        titulo: {$regex: `.*${filter}.*`, $options: 'i'}
+                    },
+                    {
+                        conferencista: {$regex: `.*${filter}.*`, $options: 'i'}
+                    },
+                    {
+                        fecha: {$regex: `.*${filter}.*`, $options: 'i'}
+                    },
+                    {
+                        objetivo: {$regex: `.*${filter}.*`, $options: 'i'}
+                    },
+                ],
+                $and: [
+                    { user: uid }
+                ]
+            }
+        )
+        .populate('user')
+        .sort( { date: -1 } )
+
+        return res.status(200).json({
+            ok: true,
+            conferencias
+        })
+
+    } catch(error) {
+        console.log( error )
+
+        res.status(500).json({
+            ok: false,
+            msg: 'list: Internal Error'
+        })
+    } 
+}
+
+const list = async(req, res = express.request) => {
+    const filter = req.params?.search || '';
+
+    try {
+        const conferencias = await Conferencia.find(
+            {
+                $or: [
+                    {
+                        titulo: {$regex: `.*${filter}.*`, $options: 'i'}
+                    },
+                    {
+                        conferencista: {$regex: `.*${filter}.*`, $options: 'i'}
+                    },
+                    {
+                        fecha: {$regex: `.*${filter}.*`, $options: 'i'}
+                    },
+                    {
+                        objetivo: {$regex: `.*${filter}.*`, $options: 'i'}
+                    },
+                ],
+            }
+        )
+        .populate('user')
+        .sort( { date: -1 } )
 
         return res.status(200).json({
             ok: true,
@@ -115,5 +179,6 @@ module.exports = {
     update,
     find,
     list,
+    myList,
     remove
 }

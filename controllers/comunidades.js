@@ -13,6 +13,7 @@ const create = async (req, res = express.request) => {
         })
 
     } catch(error) {
+        console.log( error )
         return res.status(500).json({
             ok: false,
             msg: 'create: Internal Error'
@@ -20,9 +21,27 @@ const create = async (req, res = express.request) => {
     }    
 }
 
-const list = async(req, res = express.request) => {
+const myList = async(req, res = express.request) => {
+    const { uid } = req;
+    const filter = req.params?.search || '';
+
     try {
-        const comunidades = await Comunidad.find()
+        const comunidades = await Comunidad.find(
+            { 
+                
+                $or: [
+                    {
+                        titulo: {$regex: `.*${filter}.*`, $options: 'i'}
+                    },
+                    {
+                        objetivo: {$regex: `.*${filter}.*`, $options: 'i'}
+                    },
+                ],
+                $and: [
+                    { user: uid }
+                ]
+            }
+        )
             .populate('user')
             .sort( { date: -1 } )
 
@@ -32,6 +51,41 @@ const list = async(req, res = express.request) => {
         })
 
     } catch(error) {
+        console.log( error )
+
+        res.status(500).json({
+            ok: false,
+            msg: 'myList: Internal Error'
+        })
+    }   
+}
+
+const list = async(req, res = express.request) => {
+    const filter = req.params?.search || '';
+
+    try {
+        const comunidades = await Comunidad.find(
+            {
+                $or: [
+                    {
+                        titulo: {$regex: `.*${filter}.*`, $options: 'i'}
+                    },
+                    {
+                        objetivo: {$regex: `.*${filter}.*`, $options: 'i'}
+                    },
+                ]
+            }
+        )
+            .populate('user')
+            .sort( { date: -1 } )
+
+        return res.status(200).json({
+            ok: true,
+            comunidades
+        })
+
+    } catch(error) {
+        console.log(error)
         res.status(500).json({
             ok: false,
             msg: 'list: Internal Error'
@@ -115,5 +169,6 @@ module.exports = {
     update,
     find,
     list,
+    myList,
     remove
 }
