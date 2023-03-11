@@ -59,6 +59,14 @@ const PerfilSchema = Schema({
         type: [Schema.Types.ObjectId],
         ref: 'Tag',
         required: false
+    },
+    created_at: {
+        type: Date,
+        default: Date.now
+    },
+    updated_at: {
+        type: Date,
+        default: Date.now
     }
 })
 

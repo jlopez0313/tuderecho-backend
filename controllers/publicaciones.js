@@ -29,7 +29,7 @@ const list = async(req, res = express.request) => {
                   path : 'perfil'
                 }
             }
-        ).sort( { fecha: -1 } )
+        ).sort( { created_at: -1 } )
 
         return res.status(200).json({
             ok: true,

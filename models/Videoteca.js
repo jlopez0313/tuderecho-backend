@@ -24,6 +24,14 @@ const VideotecaSchema = Schema({
     precio: {
         type: String,
     },
+    created_at: {
+        type: Date,
+        default: Date.now
+    },
+    updated_at: {
+        type: Date,
+        default: Date.now
+    }
 })
 
 VideotecaSchema.method('toJSON', function() {

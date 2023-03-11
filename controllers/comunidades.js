@@ -43,7 +43,7 @@ const myList = async(req, res = express.request) => {
             }
         )
             .populate('user')
-            .sort( { date: -1 } )
+            .sort( { updated_at: -1 } )
 
         return res.status(200).json({
             ok: true,
@@ -77,7 +77,7 @@ const list = async(req, res = express.request) => {
             }
         )
             .populate('user')
-            .sort( { date: -1 } )
+            .sort( { updated_at: -1 } )
 
         return res.status(200).json({
             ok: true,

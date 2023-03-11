@@ -25,7 +25,16 @@ const UsuarioSchema = Schema({
     provider: {
         type: String,
         required: true
+    },
+    created_at: {
+        type: Date,
+        default: Date.now
+    },
+    updated_at: {
+        type: Date,
+        default: Date.now
     }
+    
 },{
     toJSON: {
         virtuals: true
