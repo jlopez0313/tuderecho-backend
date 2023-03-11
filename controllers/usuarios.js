@@ -152,7 +152,14 @@ const find = async(req, res = express.request) => {
 
 const update = async (req, res = express.request) => {
     try {
-        const usuario = await Usuario.findByIdAndUpdate(req.params.id, req.body);
+        const usuario = await Usuario.findByIdAndUpdate(
+            req.params.id, 
+            {
+                ...req.body,
+                updated_at: Date.now
+            }
+        );
+
         if ( !usuario) {
             return res.status(404).json({
                 ok: false,
@@ -178,6 +185,7 @@ const update = async (req, res = express.request) => {
             { 
                 ...req.body.perfil,
                 photo: imageUrl,
+                updated_at: Date.now
             },
             { new: true }
         )
