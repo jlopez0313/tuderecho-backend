@@ -156,7 +156,7 @@ const update = async (req, res = express.request) => {
             req.params.id, 
             {
                 ...req.body,
-                updated_at: Date.now
+                updated_at:Date.now()
             }
         );
 
@@ -185,7 +185,7 @@ const update = async (req, res = express.request) => {
             { 
                 ...req.body.perfil,
                 photo: imageUrl,
-                updated_at: Date.now
+                updated_at: Date.now()
             },
             { new: true }
         )
