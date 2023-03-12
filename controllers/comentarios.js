@@ -1,12 +1,12 @@
 const express = require('express');
 const { generarJWT } = require('../helpers/jwt');
-const Publicacion = require('../models/Publicaciones');
+const Comentario = require('../models/Comentario');
 
 const create = async (req, res = express.request) => {
-    const publicacion = new Publicacion( req.body );
+    const comentario = new Comentario( req.body );
     try {
-        
-        const saved = await publicacion.save();
+
+        const saved = await comentario.save();
         return res.status(201).json({
             ok: true,
             saved
@@ -22,56 +22,34 @@ const create = async (req, res = express.request) => {
 
 const list = async(req, res = express.request) => {
     try {
-        const publicaciones = 
-        await Publicacion
-        .find()
-        .populate(
-            {
-                path : 'comentarios',
-                populate : {
-                  path : 'user',
-                  populate : {
-                    path : 'perfil'
-                  }
-                }
-            }
-        )
-        .populate(
-            {
-                path : 'user',
-                populate : {
-                  path : 'perfil'
-                }
-            },
-        ).sort( { created_at: -1 } )
+        const comentarios = await Comentario.find();
 
         return res.status(200).json({
             ok: true,
-            publicaciones
+            comentarios
         })
 
     } catch(error) {
-        console.log( error )
         res.status(500).json({
             ok: false,
             msg: 'list: Internal Error'
         })
-    }
+    }   
 }
 
 const find = async(req, res = express.request) => {
     try {
-        const publicacion = await Publicacion.findById(req.params.id);
-        if ( !publicacion) {
+        const comentario = await Comentario.findById(req.params.id);
+        if ( !comentario) {
             return res.status(404).json({
-                ok: false,                
-                msg: 'El Publicacion no existe'
+                ok: false,
+                msg: 'El Comentario no existe'
             })    
         }
 
         return res.status(200).json({
             ok: true,
-            publicacion
+            comentario
         })
 
     } catch(error) {
@@ -86,17 +64,27 @@ const update = async (req, res = express.request) => {
     const { name } = req.body;
 
     try {
-        const publicacion = await Publicacion.findByIdAndUpdate(req.params.id, {name}, { new: true });
-        if ( !publicacion) {
+        const comentario = await Comentario.findByIdAndUpdate(
+            req.params.id,
+            {
+                name,
+                updated_at:Date.now()
+            },
+            { 
+                new: true
+            }
+        );
+
+        if ( !comentario) {
             return res.status(404).json({
                 ok: false,
-                message: 'La publicación no existe'
+                msg: 'El Comentario no existe'
             })    
         }
 
         return res.status(200).json({
             ok: true,
-            publicacion
+            comentario
         })
 
     } catch(error) {
@@ -109,17 +97,16 @@ const update = async (req, res = express.request) => {
 
 const remove = async(req, res = express.request) => {
     try {
-        const publicacion = await Publicacion.findByIdAndDelete(req.params.id);
-        if ( !publicacion) {
+        const comentario = await Comentario.findByIdAndDelete(req.params.id);
+        if ( !comentario) {
             return res.status(404).json({
                 ok: false,
-                message: 'La publicación no existe'
             })    
         }
 
         return res.status(200).json({
             ok: true,
-            publicacion
+            comentario
         })
 
     } catch(error) {

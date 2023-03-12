@@ -25,6 +25,20 @@ const PublicacionSchema = Schema({
         type: Date,
         default: Date.now
     }
+},{
+    toJSON: {
+        virtuals: true
+    },
+    toObject: {
+        virtuals: true
+    }
+})
+
+PublicacionSchema.virtual('comentarios', {
+    ref: 'Comentario',
+    localField: '_id',
+    foreignField: 'publicacion',
+    justOne: false
 })
 
 PublicacionSchema.method('toJSON', function() {

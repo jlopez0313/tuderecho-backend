@@ -13,6 +13,7 @@ const create = async (req, res = express.request) => {
         })
 
     } catch(error) {
+        console.log( error )
         return res.status(500).json({
             ok: false,
             msg: 'create: Internal Error'
