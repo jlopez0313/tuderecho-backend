@@ -16,6 +16,10 @@ const ComentarioSchema = Schema({
         type: String,
         required: true
     },
+    likes: {
+        type: [String],
+        required: false
+    },
     created_at: {
         type: Date,
         default: Date.now

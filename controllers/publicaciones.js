@@ -130,10 +130,75 @@ const remove = async(req, res = express.request) => {
     } 
 }
 
+const likes = async (req, res = express.request) => {
+    const {uid} = req;
+    
+    try {
+        const publicacion = await Publicacion.findById(req.params.id).lean();
+
+        if ( !publicacion) {
+            return res.status(404).json({
+                ok: false,
+                message: 'La publicación no existe'
+            })    
+        }
+
+        const hasLike = publicacion.likes.find( like => like === uid );
+
+        let query = {}
+        if ( hasLike ) {
+            query = {
+                $pull: {"likes": uid }
+            }
+        } else {
+            query = {
+                $push: {"likes": uid }
+            }
+        }
+
+        const updated = await Publicacion.findByIdAndUpdate(req.params.id, 
+            query,
+            { new: true, upsert: true }
+        ).populate(
+            {
+                path : 'comentarios',
+                populate : {
+                  path : 'user',
+                  populate : {
+                    path : 'perfil'
+                  }
+                }
+            }
+        )
+        .populate(
+            {
+                path : 'user',
+                populate : {
+                  path : 'perfil'
+                }
+            },
+        )
+
+        return res.status(200).json({
+            ok: true,
+            hasLike,
+            updated
+        })
+
+    } catch(error) {
+        console.log( error )
+        res.status(500).json({
+            ok: false,
+            msg: 'update: Internal Error'
+        })
+    } 
+}
+
 module.exports = {
     create,
     update,
     find,
     list,
-    remove
+    remove,
+    likes
 }

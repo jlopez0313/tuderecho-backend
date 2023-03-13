@@ -1,9 +1,11 @@
 const { Schema, model } = require("mongoose");
+const autopopulate = require('mongoose-autopopulate');
 
 const PublicacionSchema = Schema({
     user: {
         type: Schema.Types.ObjectId,
-        ref: 'Usuario'
+        ref: 'Usuario',
+        autopopulate: true
     },
     comment: {
         type: String,
@@ -16,6 +18,10 @@ const PublicacionSchema = Schema({
     },
     fecha: {
         type: String,
+    },
+    likes: {
+        type: [String],
+        required: false
     },
     created_at: {
         type: Date,
