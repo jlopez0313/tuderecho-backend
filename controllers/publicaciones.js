@@ -45,6 +45,8 @@ const list = async(req, res = express.request) => {
             },
         ).sort( { created_at: -1 } )
 
+        console.log( publicaciones[0].comentarios[0] )
+
         return res.status(200).json({
             ok: true,
             publicaciones

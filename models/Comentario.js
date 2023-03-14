@@ -28,6 +28,13 @@ const ComentarioSchema = Schema({
         type: Date,
         default: Date.now
     }
+},{
+    toJSON: {
+        virtuals: true
+    },
+    toObject: {
+        virtuals: true
+    }
 })
 
 // ComentarioSchema.plugin(autopopulate);

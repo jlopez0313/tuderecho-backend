@@ -32,6 +32,13 @@ const VideotecaSchema = Schema({
         type: Date,
         default: Date.now
     }
+},{
+    toJSON: {
+        virtuals: true
+    },
+    toObject: {
+        virtuals: true
+    }
 })
 
 VideotecaSchema.method('toJSON', function() {

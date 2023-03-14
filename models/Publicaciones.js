@@ -47,7 +47,7 @@ PublicacionSchema.virtual('comentarios', {
     justOne: false
 })
 
-PublicacionSchema.method('toJSON', function() {
+PublicacionSchema.method('toJSON', function( options ) {
     const {__V, _id, ...object} = this.toObject();
     object.id = _id
     return object;

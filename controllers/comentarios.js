@@ -6,7 +6,15 @@ const create = async (req, res = express.request) => {
     const comentario = new Comentario( req.body );
     try {
 
-        const saved = await comentario.save();
+        let saved = await comentario.save();
+        saved = await saved.populate(
+            {
+                path : 'user',
+                populate : {
+                  path : 'perfil'
+                }
+            },
+        )
         return res.status(201).json({
             ok: true,
             saved
@@ -110,6 +118,7 @@ const remove = async(req, res = express.request) => {
         })
 
     } catch(error) {
+        console.log( error )
         res.status(500).json({
             ok: false,
             msg: 'remove: Internal Error'

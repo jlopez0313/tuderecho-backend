@@ -68,6 +68,13 @@ const PerfilSchema = Schema({
         type: Date,
         default: Date.now
     }
+},{
+    toJSON: {
+        virtuals: true
+    },
+    toObject: {
+        virtuals: true
+    }
 })
 
 PerfilSchema.method('toJSON', function() {

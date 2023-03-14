@@ -40,7 +40,13 @@ const ConferenciaSchema = Schema({
         type: Date,
         default: Date.now
     }
-
+},{
+    toJSON: {
+        virtuals: true
+    },
+    toObject: {
+        virtuals: true
+    }
 })
 
 ConferenciaSchema.method('toJSON', function() {

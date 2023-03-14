@@ -13,6 +13,13 @@ const EspecialidadSchema = Schema({
         type: Date,
         default: Date.now
     }
+},{
+    toJSON: {
+        virtuals: true
+    },
+    toObject: {
+        virtuals: true
+    }
 })
 
 EspecialidadSchema.method('toJSON', function() {

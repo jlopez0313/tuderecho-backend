@@ -32,6 +32,13 @@ const ComunidadSchema = Schema({
         type: Date,
         default: Date.now
     }
+},{
+    toJSON: {
+        virtuals: true
+    },
+    toObject: {
+        virtuals: true
+    }
 })
 
 ComunidadSchema.method('toJSON', function() {
