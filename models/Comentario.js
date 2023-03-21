@@ -2,10 +2,20 @@ const { Schema, model } = require("mongoose");
 const autopopulate = require('mongoose-autopopulate');
 
 const ComentarioSchema = Schema({
+    comentarios: {
+        type: [Schema.Types.ObjectId],
+        ref: 'Comentario',
+        autopopulate: true,
+        required: false
+    },
     user: {
         type: Schema.Types.ObjectId,
         ref: 'Usuario',
         autopopulate: true
+    },
+    parent: {
+        type: String,
+        required: false
     },
     publicacion: {
         type: Schema.Types.ObjectId,
@@ -37,8 +47,7 @@ const ComentarioSchema = Schema({
     }
 })
 
-// ComentarioSchema.plugin(autopopulate);
-
+ComentarioSchema.plugin(autopopulate);
 
 ComentarioSchema.method('toJSON', function() {
     const {__V, _id, ...object} = this.toObject();

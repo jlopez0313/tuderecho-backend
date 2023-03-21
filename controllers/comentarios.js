@@ -4,6 +4,7 @@ const Comentario = require('../models/Comentario');
 
 const create = async (req, res = express.request) => {
     const comentario = new Comentario( req.body );
+    const { parent } = req.body;
     try {
 
         let saved = await comentario.save();
@@ -15,12 +16,24 @@ const create = async (req, res = express.request) => {
                 }
             },
         )
+
+        if ( parent ) {
+            
+            const padre = await Comentario.findByIdAndUpdate(
+                parent,
+                { $push: {"comentarios": saved.id } },
+                { new: true, upsert: true }
+            )
+        }
+
+
         return res.status(201).json({
             ok: true,
             saved
         })
 
     } catch(error) {
+        console.log( error )
         return res.status(500).json({
             ok: false,
             msg: 'create: Internal Error'
