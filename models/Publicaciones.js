@@ -7,6 +7,12 @@ const PublicacionSchema = Schema({
         ref: 'Usuario',
         autopopulate: true
     },
+    post: {
+        type: Schema.Types.ObjectId,
+        ref: 'Publicacion',
+        autopopulate: true,
+        required: false,
+    },
     comment: {
         type: String,
     },
@@ -20,6 +26,10 @@ const PublicacionSchema = Schema({
         type: String,
     },
     likes: {
+        type: [String],
+        required: false
+    },
+    shares: {
         type: [String],
         required: false
     },
@@ -44,13 +54,10 @@ PublicacionSchema.virtual('comentarios', {
     ref: 'Comentario',
     localField: '_id',
     foreignField: 'publicacion',
-    justOne: false
+    justOne: false,
+    autopopulate: true
 })
 
-PublicacionSchema.method('toJSON', function( options ) {
-    const {__V, _id, ...object} = this.toObject();
-    object.id = _id
-    return object;
-})
+PublicacionSchema.plugin(autopopulate);
 
 module.exports = model('Publicacion', PublicacionSchema)

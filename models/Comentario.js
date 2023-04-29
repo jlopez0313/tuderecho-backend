@@ -5,8 +5,8 @@ const ComentarioSchema = Schema({
     comentarios: {
         type: [Schema.Types.ObjectId],
         ref: 'Comentario',
+        required: false,
         autopopulate: true,
-        required: false
     },
     user: {
         type: Schema.Types.ObjectId,
@@ -47,12 +47,12 @@ const ComentarioSchema = Schema({
     }
 })
 
-ComentarioSchema.plugin(autopopulate);
-
 ComentarioSchema.method('toJSON', function() {
     const {__V, _id, ...object} = this.toObject();
     object.id = _id
     return object;
 })
+
+ComentarioSchema.plugin(autopopulate);
 
 module.exports = model('Comentario', ComentarioSchema)

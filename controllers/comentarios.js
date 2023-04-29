@@ -8,15 +8,6 @@ const create = async (req, res = express.request) => {
     try {
 
         let saved = await comentario.save();
-        saved = await saved.populate(
-            {
-                path : 'user',
-                populate : {
-                  path : 'perfil'
-                }
-            },
-        )
-
         if ( parent ) {
             
             const padre = await Comentario.findByIdAndUpdate(

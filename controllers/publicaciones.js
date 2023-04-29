@@ -4,15 +4,26 @@ const Publicacion = require('../models/Publicaciones');
 
 const create = async (req, res = express.request) => {
     const publicacion = new Publicacion( req.body );
+    
     try {
         
+        if ( req.body.post ) {
+            const shared = await addShare( req, req.body.post )
+            
+            if (!shared ) {
+                throw new Error('Post Not Found')
+            }
+        }
+
         const saved = await publicacion.save();
+
         return res.status(201).json({
             ok: true,
             saved
         })
 
     } catch(error) {
+        console.log( error )
         return res.status(500).json({
             ok: false,
             msg: 'create: Internal Error'
@@ -22,30 +33,15 @@ const create = async (req, res = express.request) => {
 
 const list = async(req, res = express.request) => {
     try {
-        const publicaciones = 
-        await Publicacion
-        .find()
-        .populate(
-            {
-                path : 'comentarios',
-                populate : {
-                  path : 'user',
-                  populate : {
-                    path : 'perfil'
-                  }
+        const publicaciones =  await Publicacion
+            .find()
+            .populate({
+                path: 'post',
+                options: { 
+                    autopopulate: { maxDepth: 1 }
                 }
-            }
-        )
-        .populate(
-            {
-                path : 'user',
-                populate : {
-                  path : 'perfil'
-                }
-            },
-        ).sort( { created_at: -1 } )
-
-        console.log( publicaciones[0].comentarios[0] )
+            })
+            .sort( { created_at: -1 } )
 
         return res.status(200).json({
             ok: true,
@@ -161,24 +157,6 @@ const likes = async (req, res = express.request) => {
         const updated = await Publicacion.findByIdAndUpdate(req.params.id, 
             query,
             { new: true, upsert: true }
-        ).populate(
-            {
-                path : 'comentarios',
-                populate : {
-                  path : 'user',
-                  populate : {
-                    path : 'perfil'
-                  }
-                }
-            }
-        )
-        .populate(
-            {
-                path : 'user',
-                populate : {
-                  path : 'perfil'
-                }
-            },
         )
 
         return res.status(200).json({
@@ -194,6 +172,26 @@ const likes = async (req, res = express.request) => {
             msg: 'update: Internal Error'
         })
     } 
+}
+
+const addShare = async ( req, postsID ) => {
+    const {uid} = req;
+
+    const publicacion = await Publicacion.findById(postsID).lean();
+
+    if ( !publicacion) {
+        return false    
+    }
+
+    const updated = await Publicacion.findByIdAndUpdate(
+        postsID, 
+        {
+            $push: {"shares": uid }
+        },
+        { new: true, upsert: true }
+    )
+
+    return updated;
 }
 
 module.exports = {

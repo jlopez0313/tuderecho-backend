@@ -1,9 +1,11 @@
 const { Schema, model } = require("mongoose");
+const autopopulate = require('mongoose-autopopulate');
 
 const VideotecaSchema = Schema({
     user: {
         type: Schema.Types.ObjectId,
-        ref: 'Usuario'
+        ref: 'Usuario',
+        autopopulate: true
     },
     titulo: {
         type: String,
@@ -46,5 +48,7 @@ VideotecaSchema.method('toJSON', function() {
     object.id = _id
     return object;
 })
+
+VideotecaSchema.plugin(autopopulate);
 
 module.exports = model('Videoteca', VideotecaSchema)

@@ -1,9 +1,11 @@
 const { Schema, model } = require("mongoose");
+const autopopulate = require('mongoose-autopopulate');
 
 const ConferenciaSchema = Schema({
     user: {
         type: Schema.Types.ObjectId,
-        ref: 'Usuario'
+        ref: 'Usuario',
+        autopopulate: true
     },
     titulo: {
         type: String,
@@ -54,5 +56,7 @@ ConferenciaSchema.method('toJSON', function() {
     object.id = _id
     return object;
 })
+
+ConferenciaSchema.plugin(autopopulate);
 
 module.exports = model('Conferencia', ConferenciaSchema)

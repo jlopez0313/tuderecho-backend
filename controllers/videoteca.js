@@ -27,23 +27,22 @@ const myList = async(req, res = express.request) => {
 
     try {
         const videoteca = await Videoteca.find(
-            { 
-                
-                $or: [
-                    {
-                        titulo: {$regex: `.*${filter}.*`, $options: 'i'}
-                    },
-                    {
-                        conferencista: {$regex: `.*${filter}.*`, $options: 'i'}
-                    },
-                ],
-                $and: [
-                    { user: uid }
-                ]
-            }
-        )
-        .populate('user')
-        .sort( { updated_at: -1 } )
+                { 
+                    
+                    $or: [
+                        {
+                            titulo: {$regex: `.*${filter}.*`, $options: 'i'}
+                        },
+                        {
+                            conferencista: {$regex: `.*${filter}.*`, $options: 'i'}
+                        },
+                    ],
+                    $and: [
+                        { user: uid }
+                    ]
+                }
+            )
+            .sort( { updated_at: -1 } )
 
         return res.status(200).json({
             ok: true,
@@ -65,20 +64,19 @@ const list = async(req, res = express.request) => {
 
     try {
         const videoteca = await Videoteca.find(
-            { 
-                
-                $or: [
-                    {
-                        titulo: {$regex: `.*${filter}.*`, $options: 'i'}
-                    },
-                    {
-                        conferencista: {$regex: `.*${filter}.*`, $options: 'i'}
-                    },
-                ],
-            }
-        )
-        .populate('user')
-        .sort( { updated_at: -1 } )
+                { 
+                    
+                    $or: [
+                        {
+                            titulo: {$regex: `.*${filter}.*`, $options: 'i'}
+                        },
+                        {
+                            conferencista: {$regex: `.*${filter}.*`, $options: 'i'}
+                        },
+                    ],
+                }
+            )
+            .sort( { updated_at: -1 } )
 
         return res.status(200).json({
             ok: true,

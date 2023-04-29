@@ -1,14 +1,17 @@
 const { Schema, model } = require("mongoose");
+const autopopulate = require('mongoose-autopopulate');
 
 const PerfilSchema = Schema({
     user: {
         type: Schema.Types.ObjectId,
-        ref: 'Usuario'
+        ref: 'Usuario',
+        autopopulate: true
     },
     especialidad: {
         type: Schema.Types.ObjectId,
         ref: 'Especialidad',
-        required: false
+        required: false,
+        autopopulate: true
     },
     tarjeta_profesional: {
         type: String,
@@ -82,5 +85,7 @@ PerfilSchema.method('toJSON', function() {
     object.id = _id
     return object;
 })
+
+PerfilSchema.plugin(autopopulate);
 
 module.exports = model('Perfil', PerfilSchema)

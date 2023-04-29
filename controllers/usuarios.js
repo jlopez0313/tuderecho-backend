@@ -7,6 +7,28 @@ const base64Img = require('base64-img');
 const bcrypt = require('bcryptjs');
 const fs = require('fs')
 
+const conectados = async(req, res = express.request) => {
+    const {uid} = req.body
+    console.log( uid );
+    try {
+        const usuarios = await Usuario.find({ 
+            _id: { $ne: uid },
+            rol: 'Abogado'
+        });
+
+        return res.status(200).json({
+            ok: true,
+            usuarios
+        })
+
+    } catch(error) {
+        res.status(500).json({
+            ok: false,
+            msg: 'list: Internal Error'
+        })
+    }   
+}
+
 const recovery = async (req, res = express.request) => {
     const {email} = req.body;
     try {
@@ -294,6 +316,7 @@ const uploadfromUrl = (photoUrl, resolve, reject) => {
 }
 
 module.exports = {
+    conectados,
     recovery,
     passwords,
     create,

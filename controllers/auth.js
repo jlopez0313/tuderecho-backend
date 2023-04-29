@@ -22,7 +22,7 @@ const crearUsuario = async (req, res = express.request) => {
         usuario.password = bcrypt.hashSync(password, salt);
         await usuario.save();
 
-        const token = await( generarJWT( usuario.id, usuario.email, usuario.rol ) );
+        const token = await( generarJWT( usuario.id, usuario.name, usuario.rol, usuario.perfil?.photo ) );
 
         if ( provider === 'GMAIL' ) {
             sendEmail(email, 'Bienvenido!', 'Mensaje de bienvenida a Tu Derecho!')
@@ -46,8 +46,8 @@ const loginUsuario = async(req, res = express.request) => {
     const {email, password} = req.body;
     try {
 
-        const usuario = await Usuario.findOne({email}).populate('perfil');
-        console.log( usuario )
+        const usuario = await Usuario.findOne({email});
+
         if ( !usuario ) {
             return res.status(400).json({
                 ok: false,
@@ -64,7 +64,9 @@ const loginUsuario = async(req, res = express.request) => {
             })
         }
 
-        const token = await( generarJWT( usuario.id, usuario.email, usuario.rol ) );
+        await Usuario.findByIdAndUpdate( usuario.id, { isLogged: true } )
+
+        const token = await( generarJWT( usuario.id, usuario.name, usuario.rol, usuario.perfil?.photo ) );
         
         return res.status(200).json({
             ok: true,
@@ -82,9 +84,9 @@ const loginUsuario = async(req, res = express.request) => {
 }
 
 const revalidarToken = async (req, res = express.request) => {
-    const {uid, email, rol} = req;
+    const {uid, name, rol, photo} = req;
 
-    const token = await( generarJWT( uid, email, rol ) );
+    const token = await( generarJWT( uid, name, rol, photo ) );
 
     res.status(200).json({
         ok: true,

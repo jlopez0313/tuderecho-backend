@@ -27,22 +27,21 @@ const myList = async(req, res = express.request) => {
 
     try {
         const comunidades = await Comunidad.find(
-            { 
-                
-                $or: [
-                    {
-                        titulo: {$regex: `.*${filter}.*`, $options: 'i'}
-                    },
-                    {
-                        objetivo: {$regex: `.*${filter}.*`, $options: 'i'}
-                    },
-                ],
-                $and: [
-                    { user: uid }
-                ]
-            }
-        )
-            .populate('user')
+                { 
+                    
+                    $or: [
+                        {
+                            titulo: {$regex: `.*${filter}.*`, $options: 'i'}
+                        },
+                        {
+                            objetivo: {$regex: `.*${filter}.*`, $options: 'i'}
+                        },
+                    ],
+                    $and: [
+                        { user: uid }
+                    ]
+                }
+            )
             .sort( { updated_at: -1 } )
 
         return res.status(200).json({
@@ -65,18 +64,17 @@ const list = async(req, res = express.request) => {
 
     try {
         const comunidades = await Comunidad.find(
-            {
-                $or: [
-                    {
-                        titulo: {$regex: `.*${filter}.*`, $options: 'i'}
-                    },
-                    {
-                        objetivo: {$regex: `.*${filter}.*`, $options: 'i'}
-                    },
-                ]
-            }
-        )
-            .populate('user')
+                {
+                    $or: [
+                        {
+                            titulo: {$regex: `.*${filter}.*`, $options: 'i'}
+                        },
+                        {
+                            objetivo: {$regex: `.*${filter}.*`, $options: 'i'}
+                        },
+                    ]
+                }
+            )
             .sort( { updated_at: -1 } )
 
         return res.status(200).json({

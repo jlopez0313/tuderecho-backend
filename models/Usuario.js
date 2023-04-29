@@ -1,4 +1,5 @@
 const { Schema, model } = require("mongoose");
+const autopopulate = require('mongoose-autopopulate');
 
 const UsuarioSchema = Schema({
     rol: {
@@ -26,6 +27,10 @@ const UsuarioSchema = Schema({
         type: String,
         required: true
     },
+    isLogged: {
+        type: Boolean,
+        required: false,
+    },
     created_at: {
         type: Date,
         default: Date.now
@@ -37,10 +42,12 @@ const UsuarioSchema = Schema({
     
 },{
     toJSON: {
-        virtuals: true
+        virtuals: true,
+        getters: true
     },
     toObject: {
-        virtuals: true
+        virtuals: true,
+        getters: true
     }
 })
 
@@ -48,7 +55,8 @@ UsuarioSchema.virtual('perfil', {
     ref: 'Perfil',
     localField: '_id',
     foreignField: 'user',
-    justOne: true
+    justOne: true,
+    autopopulate: true,
 })
 
 UsuarioSchema.method('toJSON', function() {
@@ -56,5 +64,7 @@ UsuarioSchema.method('toJSON', function() {
     object.id = _id
     return object;
 })
+
+UsuarioSchema.plugin(autopopulate);
 
 module.exports = model('Usuario', UsuarioSchema)
