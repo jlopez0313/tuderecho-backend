@@ -24,7 +24,7 @@ class Server {
         this.paths = {
             auth: {
                 path: '/api/auth',
-                route: './routes/auth',
+                route: '../routes/auth',
             },
             especialidades: {
                 path: '/api/especialidades',
