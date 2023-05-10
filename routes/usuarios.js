@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const  { check } = require('express-validator');
-const { recovery, passwords, list, find, create, update, remove, conectados } = require('../controllers/usuarios');
+const { recovery, passwords, list, find, create, update, remove } = require('../controllers/usuarios');
 const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-token');
 
@@ -19,13 +19,6 @@ router.use( validarJWT )
 
 router.get('/', list);
 router.get('/:id', find);
-router.post(
-    '/conectados',
-    [
-        validarCampos
-    ],
-    conectados
-);
 
 router.post(
     '/passwords',

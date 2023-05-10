@@ -5,15 +5,8 @@ const TagSchema = Schema({
         type: String,
         required: true
     },
-    created_at: {
-        type: Date,
-        default: Date.now
-    },
-    updated_at: {
-        type: Date,
-        default: Date.now
-    }
 },{
+    timestamps: true,
     toJSON: {
         virtuals: true
     },

@@ -31,23 +31,13 @@ const UsuarioSchema = Schema({
         type: Boolean,
         required: false,
     },
-    created_at: {
-        type: Date,
-        default: Date.now
-    },
-    updated_at: {
-        type: Date,
-        default: Date.now
-    }
-    
 },{
+    timestamps: true,
     toJSON: {
-        virtuals: true,
-        getters: true
+        virtuals: true
     },
     toObject: {
-        virtuals: true,
-        getters: true
+        virtuals: true
     }
 })
 

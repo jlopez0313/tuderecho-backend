@@ -30,15 +30,8 @@ const ComentarioSchema = Schema({
         type: [String],
         required: false
     },
-    created_at: {
-        type: Date,
-        default: Date.now
-    },
-    updated_at: {
-        type: Date,
-        default: Date.now
-    }
 },{
+    timestamps: true,
     toJSON: {
         virtuals: true
     },
