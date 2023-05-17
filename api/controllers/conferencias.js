@@ -1,8 +1,42 @@
 const express = require('express');
 const { generarJWT } = require('../helpers/jwt');
 const Conferencia = require('../models/Conferencia');
+const formidable = require('formidable');
+const path = require('path');
 
 const create = async (req, res = express.request) => {
+
+    const form = formidable({ multiples: true, keepExtensions: true });
+    form.uploadDir = path.join(__dirname, "..", "..", "public", "conferencias");
+
+    form.parse(req, async (err, fields, files) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+
+        const pathUrl = `${ process.env.URL }/conferencias/${ files.archivo.newFilename }`
+
+        const conferencia = new Conferencia( {...fields, archivo: pathUrl } );
+
+        try {
+        
+            const saved = await conferencia.save();
+            return res.status(201).json({
+                ok: true,
+                saved
+            })
+    
+        } catch(error) {
+            return res.status(500).json({
+                ok: false,
+                msg: 'create: Internal Error'
+            })
+        }
+        
+    });
+
+    /*
     const conferencia = new Conferencia( req.body );
     try {
         
@@ -17,7 +51,9 @@ const create = async (req, res = express.request) => {
             ok: false,
             msg: 'create: Internal Error'
         })
-    }    
+    }
+
+    */
 }
 
 const myList = async(req, res = express.request) => {

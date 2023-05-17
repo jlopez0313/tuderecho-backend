@@ -5,13 +5,13 @@ const PerfilSchema = Schema({
     user: {
         type: Schema.Types.ObjectId,
         ref: 'Usuario',
-        autopopulate: true
+        // autopopulate: true
     },
     especialidad: {
         type: Schema.Types.ObjectId,
         ref: 'Especialidad',
         required: false,
-        autopopulate: true
+        // autopopulate: true
     },
     tarjeta_profesional: {
         type: String,

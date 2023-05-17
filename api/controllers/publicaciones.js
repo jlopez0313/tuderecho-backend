@@ -2,7 +2,56 @@ const express = require('express');
 const { generarJWT } = require('../helpers/jwt');
 const Publicacion = require('../models/Publicaciones');
 
+const formidable = require('formidable');
+const path = require('path');
+
 const create = async (req, res = express.request) => {
+
+    const form = formidable({ multiples: true, keepExtensions: true });
+    form.uploadDir = path.join(__dirname, "..", "..", "public", "publicaciones");
+
+    form.parse(req, async (err, fields, files) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+
+        const medias = files.files.map( file => {
+            const pathUrl = `${ process.env.URL }/publicaciones/${ file.newFilename }`
+            return pathUrl
+        })
+
+        // return res.status(500).json({ fields, files })
+
+        const publicacion = new Publicacion({...fields, medias});
+    
+        try {
+            
+            if ( req.body.post ) {
+                const shared = await addShare( req, req.body.post )
+                
+                if (!shared ) {
+                    throw new Error('Post Not Found')
+                }
+            }
+
+            const saved = await publicacion.save();
+
+            return res.status(201).json({
+                ok: true,
+                saved
+            })
+
+        } catch(error) {
+            console.log( error )
+            return res.status(500).json({
+                ok: false,
+                msg: 'create: Internal Error'
+            })
+        }
+    });
+
+    /*
     const publicacion = new Publicacion( req.body );
     
     try {
@@ -28,7 +77,8 @@ const create = async (req, res = express.request) => {
             ok: false,
             msg: 'create: Internal Error'
         })
-    }    
+    }
+    */
 }
 
 const list = async(req, res = express.request) => {
@@ -36,11 +86,19 @@ const list = async(req, res = express.request) => {
         const publicaciones =  await Publicacion
             .find()
             .populate({
+                path: 'user',
+                populate: {
+                    path: 'perfil',
+                    select: 'photo -_id',
+                },
+                select: 'name -_id',
+            })
+            /*.populate({
                 path: 'post',
                 options: { 
                     autopopulate: { maxDepth: 1 }
                 }
-            })
+            })*/
             .sort( { created_at: -1 } )
 
         return res.status(200).json({

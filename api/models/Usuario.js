@@ -46,7 +46,7 @@ UsuarioSchema.virtual('perfil', {
     localField: '_id',
     foreignField: 'user',
     justOne: true,
-    autopopulate: true,
+    // autopopulate: true,
 })
 
 UsuarioSchema.method('toJSON', function() {

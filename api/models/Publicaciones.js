@@ -5,7 +5,7 @@ const PublicacionSchema = Schema({
     user: {
         type: Schema.Types.ObjectId,
         ref: 'Usuario',
-        autopopulate: true
+        // autopopulate: true
     },
     post: {
         type: Schema.Types.ObjectId,
@@ -30,6 +30,10 @@ const PublicacionSchema = Schema({
         required: false
     },
     shares: {
+        type: [String],
+        required: false
+    },
+    comments: {
         type: [String],
         required: false
     },

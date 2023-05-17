@@ -78,7 +78,9 @@ class Server {
     addMiddlewares() {
         this.app.use( cors() );
         this.app.use( express.static('public') )
-        this.app.use( bodyParser.json({ limit: '50mb' }) );
+        this.app.use( express.urlencoded({ extended: false }) );
+        this.app.use( express.json({ limit: '50mb' }) );
+
     }
 
     setRoutes() {
