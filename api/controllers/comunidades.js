@@ -1,8 +1,10 @@
 const express = require('express');
 const { generarJWT } = require('../helpers/jwt');
 const Comunidad = require('../models/Comunidad');
+
 const formidable = require('formidable');
 const path = require('path');
+const fs = require('fs')
 
 const create = async (req, res = express.response) => {
 
@@ -182,6 +184,17 @@ const remove = async(req, res = express.response) => {
                 ok: false,
                 message: 'La comunidad no existe'
             })    
+        }
+
+        const existe = await fs.existsSync(comunidad.archivo)
+        if ( existe ) {
+            fs.unlink( comunidad.archivo, (error) => {
+                if ( error ) {
+                    console.log( 'Error eliminando', comunidad.archivo )
+                }
+            });
+        } else {
+            console.log( 'Imagen no existe', comunidad.archivo )
         }
 
         return res.status(200).json({

@@ -1,8 +1,10 @@
 const express = require('express');
 const { generarJWT } = require('../helpers/jwt');
 const Conferencia = require('../models/Conferencia');
+
 const formidable = require('formidable');
 const path = require('path');
+const fs = require('fs')
 
 const create = async (req, res = express.response) => {
 
@@ -195,6 +197,17 @@ const remove = async(req, res = express.response) => {
             })    
         }
 
+        const existe = await fs.existsSync(conferencia.archivo)
+        if ( existe ) {
+            fs.unlink( conferencia.archivo, (error) => {
+                if ( error ) {
+                    console.log( 'Error eliminando', conferencia.archivo )
+                }
+            });
+        } else {
+            console.log( 'Imagen no existe', conferencia.archivo )
+        }
+        
         return res.status(200).json({
             ok: true,
             conferencia

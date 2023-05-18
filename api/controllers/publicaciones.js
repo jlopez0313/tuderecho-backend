@@ -4,6 +4,7 @@ const Publicacion = require('../models/Publicaciones');
 
 const formidable = require('formidable');
 const path = require('path');
+const fs = require('fs')
 
 const create = async (req, res = express.response) => {
 
@@ -148,6 +149,20 @@ const remove = async(req, res = express.response) => {
                 message: 'La publicación no existe'
             })    
         }
+
+        publicacion.medias.forEach( async(media) => {
+            const existe = await fs.existsSync(media)
+            if ( existe ) {
+                fs.unlink( media, (error) => {
+                    if ( error ) {
+                        console.log( 'Error eliminando', media )
+                    }
+                });
+            } else {
+                console.log( 'Imagen no existe', media )
+            }
+        })
+
 
         return res.status(200).json({
             ok: true,
