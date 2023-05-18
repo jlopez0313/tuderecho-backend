@@ -1,8 +1,42 @@
 const express = require('express');
 const { generarJWT } = require('../helpers/jwt');
 const Comunidad = require('../models/Comunidad');
+const formidable = require('formidable');
+const path = require('path');
 
-const create = async (req, res = express.request) => {
+const create = async (req, res = express.response) => {
+
+    const form = formidable({ multiples: true, keepExtensions: true });
+    form.uploadDir = path.join(__dirname, "..", "..", "public", "comunidades");
+
+    form.parse(req, async (err, fields, files) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+
+        const pathUrl = `${ process.env.URL }/comunidades/${ files.archivo.newFilename }`
+
+        const comunidad = new Comunidad( {...fields, archivo: pathUrl } );
+
+        try {
+        
+            const saved = await comunidad.save();
+            return res.status(201).json({
+                ok: true,
+                saved
+            })
+    
+        } catch(error) {
+            return res.status(500).json({
+                ok: false,
+                msg: 'create: Internal Error'
+            })
+        }
+        
+    });
+    
+    /*
     const comunidad = new Comunidad( req.body );
     try {
         
@@ -18,10 +52,11 @@ const create = async (req, res = express.request) => {
             ok: false,
             msg: 'create: Internal Error'
         })
-    }    
+    }
+    */
 }
 
-const myList = async(req, res = express.request) => {
+const myList = async(req, res = express.response) => {
     const { uid } = req;
     const filter = req.params?.search || '';
 
@@ -42,7 +77,7 @@ const myList = async(req, res = express.request) => {
                     ]
                 }
             )
-            .sort( { updated_at: -1 } )
+            .sort( { updatedAt: -1 } )
 
         return res.status(200).json({
             ok: true,
@@ -59,7 +94,7 @@ const myList = async(req, res = express.request) => {
     }   
 }
 
-const list = async(req, res = express.request) => {
+const list = async(req, res = express.response) => {
     const filter = req.params?.search || '';
 
     try {
@@ -75,7 +110,7 @@ const list = async(req, res = express.request) => {
                     ]
                 }
             )
-            .sort( { updated_at: -1 } )
+            .sort( { updatedAt: -1 } )
 
         return res.status(200).json({
             ok: true,
@@ -91,7 +126,7 @@ const list = async(req, res = express.request) => {
     }   
 }
 
-const find = async(req, res = express.request) => {
+const find = async(req, res = express.response) => {
     try {
         const comunidad = await Comunidad.findById(req.params.id);
         if ( !comunidad) {
@@ -114,7 +149,7 @@ const find = async(req, res = express.request) => {
     }   
 }
 
-const update = async (req, res = express.request) => {
+const update = async (req, res = express.response) => {
     const { name } = req.body;
 
     try {
@@ -139,7 +174,7 @@ const update = async (req, res = express.request) => {
     } 
 }
 
-const remove = async(req, res = express.request) => {
+const remove = async(req, res = express.response) => {
     try {
         const comunidad = await Comunidad.findByIdAndDelete(req.params.id);
         if ( !comunidad) {

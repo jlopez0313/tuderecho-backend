@@ -4,7 +4,7 @@ const Usuario = require('../models/Usuario');
 const { generarJWT } = require('../helpers/jwt');
 const { sendEmail } = require('../helpers/mailer');
 
-const crearUsuario = async (req, res = express.request) => {
+const crearUsuario = async (req, res = express.response) => {
     const {name, email, password, provider} = req.body;
     try {
 
@@ -42,7 +42,7 @@ const crearUsuario = async (req, res = express.request) => {
     }    
 }
 
-const loginUsuario = async(req, res = express.request) => {
+const loginUsuario = async(req, res = express.response) => {
     const {email, password} = req.body;
     try {
 
@@ -83,7 +83,7 @@ const loginUsuario = async(req, res = express.request) => {
     }   
 }
 
-const revalidarToken = async (req, res = express.request) => {
+const revalidarToken = async (req, res = express.response) => {
     const {uid, name, rol, photo} = req;
 
     const token = await( generarJWT( uid, name, rol, photo ) );

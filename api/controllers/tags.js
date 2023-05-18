@@ -2,7 +2,7 @@ const express = require('express');
 const { generarJWT } = require('../helpers/jwt');
 const Tag = require('../models/Tag');
 
-const create = async (req, res = express.request) => {
+const create = async (req, res = express.response) => {
     const { name } = req.body;
     const tag = new Tag( req.body );
     try {
@@ -31,7 +31,7 @@ const create = async (req, res = express.request) => {
     }    
 }
 
-const list = async(req, res = express.request) => {
+const list = async(req, res = express.response) => {
     try {
         const tags = await Tag.find();
 
@@ -48,7 +48,7 @@ const list = async(req, res = express.request) => {
     }   
 }
 
-const find = async(req, res = express.request) => {
+const find = async(req, res = express.response) => {
     try {
         const tag = await Tag.findById(req.params.id);
         if ( !tag) {
@@ -71,7 +71,7 @@ const find = async(req, res = express.request) => {
     }   
 }
 
-const update = async (req, res = express.request) => {
+const update = async (req, res = express.response) => {
     const { name } = req.body;
 
     try {
@@ -79,7 +79,6 @@ const update = async (req, res = express.request) => {
             req.params.id,
             {
                 name,
-                updated_at:Date.now()
             },
             {
                 new: true
@@ -106,7 +105,7 @@ const update = async (req, res = express.request) => {
     } 
 }
 
-const remove = async(req, res = express.request) => {
+const remove = async(req, res = express.response) => {
     try {
         const tag = await Tag.findByIdAndDelete(req.params.id);
         if ( !tag) {

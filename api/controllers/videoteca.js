@@ -2,7 +2,7 @@ const express = require('express');
 const { generarJWT } = require('../helpers/jwt');
 const Videoteca = require('../models/Videoteca');
 
-const create = async (req, res = express.request) => {
+const create = async (req, res = express.response) => {
     const videoteca = new Videoteca( req.body );
     try {
         
@@ -21,7 +21,7 @@ const create = async (req, res = express.request) => {
     }    
 }
 
-const myList = async(req, res = express.request) => {
+const myList = async(req, res = express.response) => {
     const { uid } = req;
     const filter = req.params?.search || '';
 
@@ -42,7 +42,7 @@ const myList = async(req, res = express.request) => {
                     ]
                 }
             )
-            .sort( { updated_at: -1 } )
+            .sort( { updatedAt: -1 } )
 
         return res.status(200).json({
             ok: true,
@@ -59,7 +59,7 @@ const myList = async(req, res = express.request) => {
     } 
 }
 
-const list = async(req, res = express.request) => {
+const list = async(req, res = express.response) => {
     const filter = req.params?.search || '';
 
     try {
@@ -76,7 +76,7 @@ const list = async(req, res = express.request) => {
                     ],
                 }
             )
-            .sort( { updated_at: -1 } )
+            .sort( { updatedAt: -1 } )
 
         return res.status(200).json({
             ok: true,
@@ -91,7 +91,7 @@ const list = async(req, res = express.request) => {
     }   
 }
 
-const find = async(req, res = express.request) => {
+const find = async(req, res = express.response) => {
     try {
         const videoteca = await Videoteca.findById(req.params.id);
         if ( !videoteca) {
@@ -114,7 +114,7 @@ const find = async(req, res = express.request) => {
     }   
 }
 
-const update = async (req, res = express.request) => {
+const update = async (req, res = express.response) => {
     const { name } = req.body;
 
     try {
@@ -139,7 +139,7 @@ const update = async (req, res = express.request) => {
     } 
 }
 
-const remove = async(req, res = express.request) => {
+const remove = async(req, res = express.response) => {
     try {
         const videoteca = await Videoteca.findByIdAndDelete(req.params.id);
         if ( !videoteca) {

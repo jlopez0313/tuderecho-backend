@@ -10,7 +10,7 @@ const PublicacionSchema = Schema({
     post: {
         type: Schema.Types.ObjectId,
         ref: 'Publicacion',
-        autopopulate: true,
+        // autopopulate: true,
         required: false,
     },
     comment: {
@@ -33,9 +33,9 @@ const PublicacionSchema = Schema({
         type: [String],
         required: false
     },
-    comments: {
-        type: [String],
-        required: false
+    total_comments: {
+        type: Number,
+        required: false,
     },
 },{
     timestamps: true,

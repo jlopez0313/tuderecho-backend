@@ -7,7 +7,7 @@ const base64Img = require('base64-img');
 const bcrypt = require('bcryptjs');
 const fs = require('fs')
 
-const recovery = async (req, res = express.request) => {
+const recovery = async (req, res = express.response) => {
     const {email} = req.body;
     try {
 
@@ -35,7 +35,7 @@ const recovery = async (req, res = express.request) => {
     }  
 }
 
-const passwords = async (req, res = express.request) => {
+const passwords = async (req, res = express.response) => {
     const {password, password1, email} = req.body;
     try {
 
@@ -76,7 +76,7 @@ const passwords = async (req, res = express.request) => {
     }    
 }
 
-const create = async (req, res = express.request) => {
+const create = async (req, res = express.response) => {
     const { name } = req.body;
     const usuario = new Usuario( req.body );
     try {
@@ -105,9 +105,9 @@ const create = async (req, res = express.request) => {
     }    
 }
 
-const list = async(req, res = express.request) => {
+const list = async(req, res = express.response) => {
     try {
-        const usuarios = await Usuario.find();
+        const usuarios = await Usuario.find().select('-password');
 
         return res.status(200).json({
             ok: true,
@@ -122,10 +122,13 @@ const list = async(req, res = express.request) => {
     }   
 }
 
-const find = async(req, res = express.request) => {
+const find = async(req, res = express.response) => {
     
     try {
-        const usuario = await Usuario.findById(req.params.id).populate('perfil').lean();
+        const usuario = await Usuario.findById(req.params.id)
+            .select('-password')
+            .populate('perfil')
+            .lean();
         
         if ( !usuario) {
             return res.status(404).json({
@@ -154,13 +157,12 @@ const find = async(req, res = express.request) => {
     }   
 }
 
-const update = async (req, res = express.request) => {
+const update = async (req, res = express.response) => {
     try {
         const usuario = await Usuario.findByIdAndUpdate(
             req.params.id, 
             {
                 ...req.body,
-                updated_at:Date.now()
             }
         );
 
@@ -189,7 +191,6 @@ const update = async (req, res = express.request) => {
             { 
                 ...req.body.perfil,
                 photo: imageUrl,
-                updated_at: Date.now()
             },
             { new: true }
         )
@@ -221,7 +222,7 @@ const update = async (req, res = express.request) => {
     } 
 }
 
-const remove = async(req, res = express.request) => {
+const remove = async(req, res = express.response) => {
     try {
         const usuario = await Usuario.findByIdAndDelete(req.params.id);
         if ( !usuario) {

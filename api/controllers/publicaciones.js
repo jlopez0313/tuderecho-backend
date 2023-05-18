@@ -5,7 +5,7 @@ const Publicacion = require('../models/Publicaciones');
 const formidable = require('formidable');
 const path = require('path');
 
-const create = async (req, res = express.request) => {
+const create = async (req, res = express.response) => {
 
     const form = formidable({ multiples: true, keepExtensions: true });
     form.uploadDir = path.join(__dirname, "..", "..", "public", "publicaciones");
@@ -16,12 +16,10 @@ const create = async (req, res = express.request) => {
             return;
         }
 
-        const medias = files.files.map( file => {
+        const medias = files?.files?.map( file => {
             const pathUrl = `${ process.env.URL }/publicaciones/${ file.newFilename }`
             return pathUrl
         })
-
-        // return res.status(500).json({ fields, files })
 
         const publicacion = new Publicacion({...fields, medias});
     
@@ -51,37 +49,9 @@ const create = async (req, res = express.request) => {
         }
     });
 
-    /*
-    const publicacion = new Publicacion( req.body );
-    
-    try {
-        
-        if ( req.body.post ) {
-            const shared = await addShare( req, req.body.post )
-            
-            if (!shared ) {
-                throw new Error('Post Not Found')
-            }
-        }
-
-        const saved = await publicacion.save();
-
-        return res.status(201).json({
-            ok: true,
-            saved
-        })
-
-    } catch(error) {
-        console.log( error )
-        return res.status(500).json({
-            ok: false,
-            msg: 'create: Internal Error'
-        })
-    }
-    */
 }
 
-const list = async(req, res = express.request) => {
+const list = async(req, res = express.response) => {
     try {
         const publicaciones =  await Publicacion
             .find()
@@ -89,17 +59,23 @@ const list = async(req, res = express.request) => {
                 path: 'user',
                 populate: {
                     path: 'perfil',
-                    select: 'photo -_id',
+                    select: 'photo',
                 },
-                select: 'name -_id',
+                select: 'name',
             })
-            /*.populate({
+            .populate({
                 path: 'post',
-                options: { 
-                    autopopulate: { maxDepth: 1 }
+                populate: {
+                    path:'user',
+                    populate:{
+                        path: 'perfil',
+                        select: 'photo',
+                    },
+                    select: 'name',
+
                 }
-            })*/
-            .sort( { created_at: -1 } )
+            })
+            .sort( { createdAt: -1 } )
 
         return res.status(200).json({
             ok: true,
@@ -115,7 +91,7 @@ const list = async(req, res = express.request) => {
     }
 }
 
-const find = async(req, res = express.request) => {
+const find = async(req, res = express.response) => {
     try {
         const publicacion = await Publicacion.findById(req.params.id);
         if ( !publicacion) {
@@ -138,7 +114,7 @@ const find = async(req, res = express.request) => {
     }   
 }
 
-const update = async (req, res = express.request) => {
+const update = async (req, res = express.response) => {
     const { name } = req.body;
 
     try {
@@ -163,7 +139,7 @@ const update = async (req, res = express.request) => {
     } 
 }
 
-const remove = async(req, res = express.request) => {
+const remove = async(req, res = express.response) => {
     try {
         const publicacion = await Publicacion.findByIdAndDelete(req.params.id);
         if ( !publicacion) {
@@ -186,7 +162,7 @@ const remove = async(req, res = express.request) => {
     } 
 }
 
-const likes = async (req, res = express.request) => {
+const likes = async (req, res = express.response) => {
     const {uid} = req;
     
     try {

@@ -4,7 +4,7 @@ const Conferencia = require('../models/Conferencia');
 const formidable = require('formidable');
 const path = require('path');
 
-const create = async (req, res = express.request) => {
+const create = async (req, res = express.response) => {
 
     const form = formidable({ multiples: true, keepExtensions: true });
     form.uploadDir = path.join(__dirname, "..", "..", "public", "conferencias");
@@ -56,7 +56,7 @@ const create = async (req, res = express.request) => {
     */
 }
 
-const myList = async(req, res = express.request) => {
+const myList = async(req, res = express.response) => {
     const { uid } = req;
     const filter = req.params?.search || '';
 
@@ -83,7 +83,7 @@ const myList = async(req, res = express.request) => {
                     ]
                 }
             )
-            .sort( { updated_at: -1 } )
+            .sort( { updatedAt: -1 } )
 
         return res.status(200).json({
             ok: true,
@@ -100,7 +100,7 @@ const myList = async(req, res = express.request) => {
     } 
 }
 
-const list = async(req, res = express.request) => {
+const list = async(req, res = express.response) => {
     const filter = req.params?.search || '';
 
     try {
@@ -122,7 +122,7 @@ const list = async(req, res = express.request) => {
                     ],
                 }
             )
-            .sort( { updated_at: -1 } )
+            .sort( { updatedAt: -1 } )
 
         return res.status(200).json({
             ok: true,
@@ -137,7 +137,7 @@ const list = async(req, res = express.request) => {
     }   
 }
 
-const find = async(req, res = express.request) => {
+const find = async(req, res = express.response) => {
     try {
         const conferencia = await Conferencia.findById(req.params.id);
         if ( !conferencia) {
@@ -160,7 +160,7 @@ const find = async(req, res = express.request) => {
     }   
 }
 
-const update = async (req, res = express.request) => {
+const update = async (req, res = express.response) => {
     const { name } = req.body;
 
     try {
@@ -185,7 +185,7 @@ const update = async (req, res = express.request) => {
     } 
 }
 
-const remove = async(req, res = express.request) => {
+const remove = async(req, res = express.response) => {
     try {
         const conferencia = await Conferencia.findByIdAndDelete(req.params.id);
         if ( !conferencia) {

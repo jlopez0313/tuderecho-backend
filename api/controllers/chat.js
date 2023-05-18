@@ -30,7 +30,7 @@ const create = async ( data ) => {
     }    
 }
 
-const list = async(req, res = express.request) => {
+const list = async(req, res = express.response) => {
     
     try {
         const room = await Room.findOne({room: req.params.id }).populate('chats');
