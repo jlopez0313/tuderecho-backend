@@ -4,7 +4,8 @@ const Comunidad = require('../models/Comunidad');
 
 const formidable = require('formidable');
 const path = require('path');
-const fs = require('fs')
+const fs = require('fs');
+const Usuario = require('../models/Usuario');
 
 const create = async (req, res = express.response) => {
 
@@ -24,6 +25,14 @@ const create = async (req, res = express.response) => {
         try {
         
             const saved = await comunidad.save();
+
+            await Usuario.findByIdAndUpdate(
+                req.body.user,
+                {
+                    $push: {"comunidades": saved.id }
+                }
+            );
+
             return res.status(201).json({
                 ok: true,
                 saved
@@ -63,6 +72,8 @@ const myList = async(req, res = express.response) => {
     const filter = req.params?.search || '';
 
     try {
+
+        const user =  await Usuario.findById( uid );
         const comunidades = await Comunidad.find(
                 { 
                     
@@ -75,7 +86,9 @@ const myList = async(req, res = express.response) => {
                         },
                     ],
                     $and: [
-                        { user: uid }
+                        { 
+                            _id: { $in: user.comunidades || [] } 
+                        }
                     ]
                 }
             )
@@ -97,9 +110,13 @@ const myList = async(req, res = express.response) => {
 }
 
 const list = async(req, res = express.response) => {
+    
+    const { uid } = req;
     const filter = req.params?.search || '';
 
     try {
+        const user =  await Usuario.findById( uid );
+
         const comunidades = await Comunidad.find(
                 {
                     $or: [
@@ -109,6 +126,11 @@ const list = async(req, res = express.response) => {
                         {
                             objetivo: {$regex: `.*${filter}.*`, $options: 'i'}
                         },
+                    ],
+                    $and: [
+                        { 
+                            _id: { $nin: user.comunidades || [] } 
+                        }
                     ]
                 }
             )
@@ -177,6 +199,9 @@ const update = async (req, res = express.response) => {
 }
 
 const remove = async(req, res = express.response) => {
+
+    const { uid } = req;
+
     try {
         const comunidad = await Comunidad.findByIdAndDelete(req.params.id);
         if ( !comunidad) {
@@ -197,6 +222,14 @@ const remove = async(req, res = express.response) => {
             console.log( 'Imagen no existe', comunidad.archivo )
         }
 
+        await Usuario.findByIdAndUpdate(
+            uid,
+            {
+                $pull: {"comunidades": comunidad.id }
+            }
+        );
+
+
         return res.status(200).json({
             ok: true,
             comunidad
@@ -210,11 +243,45 @@ const remove = async(req, res = express.response) => {
     } 
 }
 
+const subscribe = async (req, res = express.response) => {
+    const { uid } = req;
+
+    try {
+        const comunidad = await Comunidad.findById(req.params.id);
+        
+        if ( !comunidad) {
+            return res.status(404).json({
+                ok: false,
+                message: 'La comunidad no existe'
+            })    
+        }
+
+        await Usuario.findByIdAndUpdate(
+            uid,
+            {
+                $push: {"comunidades": comunidad.id }
+            }
+        );
+
+        return res.status(200).json({
+            ok: true,
+            comunidad
+        })
+
+    } catch(error) {
+        res.status(500).json({
+            ok: false,
+            msg: 'update: Internal Error'
+        })
+    } 
+}
+
 module.exports = {
     create,
     update,
     find,
     list,
     myList,
-    remove
+    remove,
+    subscribe
 }

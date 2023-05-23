@@ -31,6 +31,11 @@ const UsuarioSchema = Schema({
         type: Boolean,
         required: false,
     },
+    comunidades: {
+        type: [Schema.Types.ObjectId],
+        ref: 'Comunidad',
+        required: false
+    },
 },{
     timestamps: true,
     toJSON: {

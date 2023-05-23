@@ -13,6 +13,12 @@ const PublicacionSchema = Schema({
         // autopopulate: true,
         required: false,
     },
+    post: {
+        type: Schema.Types.ObjectId,
+        ref: 'Comunidad',
+        // autopopulate: true,
+        required: false,
+    },
     comment: {
         type: String,
     },

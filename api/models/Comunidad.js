@@ -36,6 +36,14 @@ const ComunidadSchema = Schema({
     }
 })
 
+ComunidadSchema.virtual('publicaciones', {
+    ref: 'Comunidad',
+    localField: '_id',
+    foreignField: 'comunidad',
+    justOne: false,
+    autopopulate: true
+})
+
 ComunidadSchema.method('toJSON', function() {
     const {__V, _id, ...object} = this.toObject();
     object.id = _id
