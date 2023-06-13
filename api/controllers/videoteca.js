@@ -1,6 +1,7 @@
 const express = require('express');
 const { generarJWT } = require('../helpers/jwt');
 const Videoteca = require('../models/Videoteca');
+const Usuario = require('../models/Usuario');
 
 const create = async (req, res = express.response) => {
     const videoteca = new Videoteca( req.body );
@@ -26,6 +27,8 @@ const myList = async(req, res = express.response) => {
     const filter = req.params?.search || '';
 
     try {
+        const user =  await Usuario.findById( uid );
+
         const videoteca = await Videoteca.find(
                 { 
                     
@@ -38,7 +41,9 @@ const myList = async(req, res = express.response) => {
                         },
                     ],
                     $and: [
-                        { user: uid }
+                        { 
+                            _id: { $in: user.videoteca || [] } 
+                        }
                     ]
                 }
             )
@@ -60,9 +65,12 @@ const myList = async(req, res = express.response) => {
 }
 
 const list = async(req, res = express.response) => {
+    const { uid } = req;
     const filter = req.params?.search || '';
 
     try {
+        const user =  await Usuario.findById( uid );
+
         const videoteca = await Videoteca.find(
                 { 
                     
@@ -74,6 +82,11 @@ const list = async(req, res = express.response) => {
                             conferencista: {$regex: `.*${filter}.*`, $options: 'i'}
                         },
                     ],
+                    $and: [
+                        { 
+                            _id: { $nin: user.videoteca || [] } 
+                        }
+                    ]
                 }
             )
             .sort( { updatedAt: -1 } )
@@ -118,7 +131,7 @@ const update = async (req, res = express.response) => {
     const { name } = req.body;
 
     try {
-        const videoteca = await Videoteca.findByIdAndUpdate(req.params.id, {name}, { new: true });
+        const videoteca = await Videoteca.findByIdAndUpdate(req.params.id, {...req.body}, { new: true });
         if ( !videoteca) {
             return res.status(404).json({
                 ok: false,
@@ -162,11 +175,45 @@ const remove = async(req, res = express.response) => {
     } 
 }
 
+const subscribe = async (req, res = express.response) => {
+    const { uid } = req;
+
+    try {
+        const videoteca = await Videoteca.findById(req.params.id);
+        
+        if ( !videoteca) {
+            return res.status(404).json({
+                ok: false,
+                message: 'La videoteca no existe'
+            })    
+        }
+
+        await Usuario.findByIdAndUpdate(
+            uid,
+            {
+                $push: {"videoteca": videoteca.id }
+            }
+        );
+
+        return res.status(200).json({
+            ok: true,
+            videoteca
+        })
+
+    } catch(error) {
+        res.status(500).json({
+            ok: false,
+            msg: 'update: Internal Error'
+        })
+    } 
+}
+
 module.exports = {
     create,
     update,
     find,
     list,
     myList,
-    remove
+    remove,
+    subscribe
 }

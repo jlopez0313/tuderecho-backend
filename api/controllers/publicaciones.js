@@ -22,12 +22,26 @@ const create = async (req, res = express.response) => {
             return pathUrl
         })
 
+        if( !fields.comunidad ) {
+            delete fields.comunidad;
+        }
+
+        if( !fields.conferencia ) {
+            delete fields.conferencia;
+        }
+
+        if( !fields.videoteca ) {
+            delete fields.videoteca;
+        }
+
         const publicacion = new Publicacion({...fields, medias});
     
         try {
+
+            console.log('object', fields);
             
-            if ( req.body.post ) {
-                const shared = await addShare( req, req.body.post )
+            if ( fields.post ) {
+                const shared = await addShare( fields.user, fields.post )
                 
                 if (!shared ) {
                     throw new Error('Post Not Found')
@@ -53,9 +67,25 @@ const create = async (req, res = express.response) => {
 }
 
 const list = async(req, res = express.response) => {
+    const { comunidad } = req.body
     try {
+        const find = {}
+        if( comunidad ) {
+            find.comunidad = comunidad;            
+        } else {
+            find.comunidad = { $exists : false };
+        }
+
         const publicaciones =  await Publicacion
-            .find()
+            .find(find)
+            .populate({
+                path: 'conferencia',
+                options: { autopopulate: false },
+            })
+            .populate({
+                path: 'videoteca',
+                options: { autopopulate: false },
+            })
             .populate({
                 path: 'user',
                 populate: {
@@ -223,8 +253,7 @@ const likes = async (req, res = express.response) => {
     } 
 }
 
-const addShare = async ( req, postsID ) => {
-    const {uid} = req;
+const addShare = async ( uid, postsID ) => {
 
     const publicacion = await Publicacion.findById(postsID).lean();
 

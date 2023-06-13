@@ -174,28 +174,45 @@ const find = async(req, res = express.response) => {
 }
 
 const update = async (req, res = express.response) => {
-    const { name } = req.body;
+    
+    const form = formidable({ multiples: true, keepExtensions: true });
+    
+    form.uploadDir = path.join(__dirname, "..", "..", "public", "comunidades");
 
-    try {
-        const comunidad = await Comunidad.findByIdAndUpdate(req.params.id, {name}, { new: true });
-        if ( !comunidad) {
-            return res.status(404).json({
-                ok: false,
-                message: 'La comunidad no existe'
-            })    
+    form.parse(req, async (err, fields, files) => {
+        if (err) {
+            console.log(err);
+            return;
         }
 
-        return res.status(200).json({
-            ok: true,
-            comunidad
-        })
+        let pathUrl = ''
+        if ( files.archivo ) {
+            console.log(files.archivo);
+            pathUrl = `${ process.env.URL }/comunidades/${ files.archivo.newFilename }`
+        }
 
-    } catch(error) {
-        res.status(500).json({
-            ok: false,
-            msg: 'update: Internal Error'
-        })
-    } 
+        try {
+        
+            const body = {...fields }
+            
+            if ( pathUrl )
+                body.archivo = pathUrl
+
+            const comunidad = await Comunidad.findByIdAndUpdate( fields.id, body);
+
+            return res.status(201).json({
+                ok: true,
+                comunidad
+            })
+    
+        } catch(error) {
+            return res.status(500).json({
+                ok: false,
+                msg: 'create: Internal Error'
+            })
+        }
+        
+    });
 }
 
 const remove = async(req, res = express.response) => {

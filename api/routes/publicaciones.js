@@ -8,7 +8,7 @@ const { validarJWT } = require('../middlewares/validar-token');
 
 router.use( validarJWT )
 
-router.get('/', list);
+router.post('/list', list);
 router.get('/:id', find);
 router.post(
     '/',

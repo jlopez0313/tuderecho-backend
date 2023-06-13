@@ -1,6 +1,7 @@
 const express = require('express');
 const { generarJWT } = require('../helpers/jwt');
 const Conferencia = require('../models/Conferencia');
+const Usuario = require('../models/Usuario');
 
 const formidable = require('formidable');
 const path = require('path');
@@ -63,6 +64,8 @@ const myList = async(req, res = express.response) => {
     const filter = req.params?.search || '';
 
     try {
+
+        const user =  await Usuario.findById( uid );
         const conferencias = await Conferencia.find(
                 { 
                     
@@ -81,7 +84,9 @@ const myList = async(req, res = express.response) => {
                         },
                     ],
                     $and: [
-                        { user: uid }
+                        { 
+                            _id: { $in: user.conferencias || [] } 
+                        }
                     ]
                 }
             )
@@ -103,9 +108,13 @@ const myList = async(req, res = express.response) => {
 }
 
 const list = async(req, res = express.response) => {
+    
+    const { uid } = req;
     const filter = req.params?.search || '';
 
     try {
+        const user =  await Usuario.findById( uid );
+
         const conferencias = await Conferencia.find(
                 {
                     $or: [
@@ -122,6 +131,11 @@ const list = async(req, res = express.response) => {
                             objetivo: {$regex: `.*${filter}.*`, $options: 'i'}
                         },
                     ],
+                    $and: [
+                        { 
+                            _id: { $nin: user.conferencias || [] } 
+                        }
+                    ]
                 }
             )
             .sort( { updatedAt: -1 } )
@@ -163,31 +177,49 @@ const find = async(req, res = express.response) => {
 }
 
 const update = async (req, res = express.response) => {
-    const { name } = req.body;
+    const form = formidable({ multiples: true, keepExtensions: true });
+    
+    form.uploadDir = path.join(__dirname, "..", "..", "public", "conferencias");
 
-    try {
-        const conferencia = await Conferencia.findByIdAndUpdate(req.params.id, {name}, { new: true });
-        if ( !conferencia) {
-            return res.status(404).json({
-                ok: false,
-                message: 'La conferencia no existe'
-            })    
+    form.parse(req, async (err, fields, files) => {
+        if (err) {
+            console.log(err);
+            return;
         }
 
-        return res.status(200).json({
-            ok: true,
-            conferencia
-        })
+        let pathUrl = ''
+        if ( files.archivo ) {
+            console.log(files.archivo);
+            pathUrl = `${ process.env.URL }/conferencias/${ files.archivo.newFilename }`
+        }
 
-    } catch(error) {
-        res.status(500).json({
-            ok: false,
-            msg: 'update: Internal Error'
-        })
-    } 
+        try {
+        
+            const body = {...fields }
+            
+            if ( pathUrl )
+                body.archivo = pathUrl
+
+            const conferencia = await Conferencia.findByIdAndUpdate( fields.id, body);
+
+            return res.status(201).json({
+                ok: true,
+                conferencia
+            })
+    
+        } catch(error) {
+            return res.status(500).json({
+                ok: false,
+                msg: 'create: Internal Error'
+            })
+        }
+        
+    });
 }
 
 const remove = async(req, res = express.response) => {
+    const { uid } = req;
+
     try {
         const conferencia = await Conferencia.findByIdAndDelete(req.params.id);
         if ( !conferencia) {
@@ -207,6 +239,13 @@ const remove = async(req, res = express.response) => {
         } else {
             console.log( 'Imagen no existe', conferencia.archivo )
         }
+
+        await Usuario.findByIdAndUpdate(
+            uid,
+            {
+                $pull: {"conferencias": conferencia.id }
+            }
+        );
         
         return res.status(200).json({
             ok: true,
@@ -221,11 +260,45 @@ const remove = async(req, res = express.response) => {
     } 
 }
 
+const subscribe = async (req, res = express.response) => {
+    const { uid } = req;
+
+    try {
+        const conferencia = await Conferencia.findById(req.params.id);
+        
+        if ( !conferencia) {
+            return res.status(404).json({
+                ok: false,
+                message: 'La conferencia no existe'
+            })    
+        }
+
+        await Usuario.findByIdAndUpdate(
+            uid,
+            {
+                $push: {"conferencias": conferencia.id }
+            }
+        );
+
+        return res.status(200).json({
+            ok: true,
+            conferencia
+        })
+
+    } catch(error) {
+        res.status(500).json({
+            ok: false,
+            msg: 'update: Internal Error'
+        })
+    } 
+}
+
 module.exports = {
     create,
     update,
     find,
     list,
     myList,
-    remove
+    remove,
+    subscribe
 }

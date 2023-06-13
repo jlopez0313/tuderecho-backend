@@ -13,9 +13,21 @@ const PublicacionSchema = Schema({
         // autopopulate: true,
         required: false,
     },
-    post: {
+    comunidad: {
         type: Schema.Types.ObjectId,
         ref: 'Comunidad',
+        // autopopulate: true,
+        required: false,
+    },
+    conferencia: {
+        type: Schema.Types.ObjectId,
+        ref: 'Conferencia',
+        // autopopulate: true,
+        required: false,
+    },
+    videoteca: {
+        type: Schema.Types.ObjectId,
+        ref: 'Videoteca',
         // autopopulate: true,
         required: false,
     },

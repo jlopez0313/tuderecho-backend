@@ -36,6 +36,16 @@ const UsuarioSchema = Schema({
         ref: 'Comunidad',
         required: false
     },
+    conferencias: {
+        type: [Schema.Types.ObjectId],
+        ref: 'Conferencia',
+        required: false
+    },
+    videoteca: {
+        type: [Schema.Types.ObjectId],
+        ref: 'Videoteca',
+        required: false
+    },
 },{
     timestamps: true,
     toJSON: {
