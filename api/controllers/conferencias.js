@@ -65,6 +65,9 @@ const myList = async(req, res = express.response) => {
 
     try {
 
+        const limit = req.query.limit;
+        const page = req.query.page - 1
+
         const user =  await Usuario.findById( uid );
         const conferencias = await Conferencia.find(
                 { 
@@ -91,6 +94,8 @@ const myList = async(req, res = express.response) => {
                 }
             )
             .sort( { updatedAt: -1 } )
+            .skip(limit * page)
+            .limit(limit)
 
         return res.status(200).json({
             ok: true,
@@ -113,6 +118,8 @@ const list = async(req, res = express.response) => {
     const filter = req.params?.search || '';
 
     try {
+        const limit = req.query.limit;
+        const page = req.query.page - 1
         const user =  await Usuario.findById( uid );
 
         const conferencias = await Conferencia.find(
@@ -139,6 +146,8 @@ const list = async(req, res = express.response) => {
                 }
             )
             .sort( { updatedAt: -1 } )
+            .skip(limit * page)
+            .limit(limit)
 
         return res.status(200).json({
             ok: true,
@@ -264,7 +273,12 @@ const subscribe = async (req, res = express.response) => {
     const { uid } = req;
 
     try {
-        const conferencia = await Conferencia.findById(req.params.id);
+        const conferencia = await Conferencia.findByIdAndUpdate(
+            req.params.id,
+            {
+                $push: {"usuarios": uid }
+            }
+        );
         
         if ( !conferencia) {
             return res.status(404).json({

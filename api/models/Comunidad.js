@@ -26,6 +26,11 @@ const ComunidadSchema = Schema({
         type: String,
         required: true
     },
+    usuarios: {
+        type: [Schema.Types.ObjectId],
+        ref: 'Usuario',
+        required: false
+    },
 },{
     timestamps: true,
     toJSON: {

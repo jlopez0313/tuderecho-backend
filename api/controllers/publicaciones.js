@@ -68,7 +68,11 @@ const create = async (req, res = express.response) => {
 
 const list = async(req, res = express.response) => {
     const { comunidad } = req.body
+    
     try {
+        const limit = req.query.limit;
+        const page = req.query.page - 1
+
         const find = {}
         if( comunidad ) {
             find.comunidad = comunidad;            
@@ -107,6 +111,8 @@ const list = async(req, res = express.response) => {
                 }
             })
             .sort( { createdAt: -1 } )
+            .skip(limit * page)
+            .limit(limit)
 
         return res.status(200).json({
             ok: true,

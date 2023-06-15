@@ -27,6 +27,8 @@ const myList = async(req, res = express.response) => {
     const filter = req.params?.search || '';
 
     try {
+        const limit = req.query.limit;
+        const page = req.query.page - 1
         const user =  await Usuario.findById( uid );
 
         const videoteca = await Videoteca.find(
@@ -48,6 +50,8 @@ const myList = async(req, res = express.response) => {
                 }
             )
             .sort( { updatedAt: -1 } )
+            .skip(limit * page)
+            .limit(limit)
 
         return res.status(200).json({
             ok: true,
@@ -69,6 +73,8 @@ const list = async(req, res = express.response) => {
     const filter = req.params?.search || '';
 
     try {
+        const limit = req.query.limit;
+        const page = req.query.page - 1
         const user =  await Usuario.findById( uid );
 
         const videoteca = await Videoteca.find(
@@ -90,6 +96,8 @@ const list = async(req, res = express.response) => {
                 }
             )
             .sort( { updatedAt: -1 } )
+            .skip(limit * page)
+            .limit(limit)
 
         return res.status(200).json({
             ok: true,
@@ -179,7 +187,12 @@ const subscribe = async (req, res = express.response) => {
     const { uid } = req;
 
     try {
-        const videoteca = await Videoteca.findById(req.params.id);
+        const videoteca = await Videoteca.findByIdAndUpdate(
+            req.params.id,
+            {
+                $push: {"usuarios": uid }
+            }
+        );
         
         if ( !videoteca) {
             return res.status(404).json({

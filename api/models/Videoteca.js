@@ -26,6 +26,11 @@ const VideotecaSchema = Schema({
     precio: {
         type: String,
     },
+    usuarios: {
+        type: [Schema.Types.ObjectId],
+        ref: 'Usuario',
+        required: false
+    },
 },{
     timestamps: true,
     toJSON: {
