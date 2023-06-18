@@ -67,7 +67,30 @@ const create = async (req, res = express.response) => {
     */
 }
 
+const madeByMe = async(req, res = express.response) => {
+    const { uid } = req;
+    
+    try {
+
+        const comunidades = await Comunidad.find({ user: uid })
+
+        return res.status(200).json({
+            ok: true,
+            comunidades
+        })
+
+    } catch(error) {
+        console.log( error )
+
+        res.status(500).json({
+            ok: false,
+            msg: 'myList: Internal Error'
+        })
+    }   
+}
+
 const myList = async(req, res = express.response) => {
+    
     const { uid } = req;
     const filter = req.params?.search || '';
 
@@ -310,6 +333,7 @@ module.exports = {
     update,
     find,
     list,
+    madeByMe,
     myList,
     remove,
     subscribe
