@@ -105,9 +105,38 @@ const create = async (req, res = express.response) => {
     }    
 }
 
+const paginate = async(req, res = express.response) => {
+    try {
+        const limit = req.query.limit;
+        const page = req.query.page - 1
+
+        const usuarios = await Usuario.find()
+            .select('-password')
+            .sort( { name: 1 } )
+            .skip(limit * page)
+            .limit(limit);
+
+        const total = await Usuario.find().count();
+
+        return res.status(200).json({
+            ok: true,
+            usuarios,
+            total
+        })
+
+    } catch(error) {
+        res.status(500).json({
+            ok: false,
+            msg: 'list: Internal Error'
+        })
+    }   
+}
+
 const list = async(req, res = express.response) => {
     try {
-        const usuarios = await Usuario.find().select('-password');
+        const usuarios = await Usuario.find()
+            .select('-password')
+            .sort( { name: 1 } );
 
         return res.status(200).json({
             ok: true,
@@ -305,5 +334,6 @@ module.exports = {
     update,
     find,
     list,
+    paginate,
     remove
 }

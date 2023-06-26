@@ -22,6 +22,25 @@ const create = async (req, res = express.response) => {
     }    
 }
 
+const madeBy = async(req, res = express.response) => {
+    try {
+        const videoteca = await Videoteca.find({ user: req.params.id })
+
+        return res.status(200).json({
+            ok: true,
+            videoteca
+        })
+
+    } catch(error) {
+        console.log( error )
+
+        res.status(500).json({
+            ok: false,
+            msg: 'myList: Internal Error'
+        })
+    }   
+}
+
 const madeByMe = async(req, res = express.response) => {
     const { uid } = req;
     
@@ -247,6 +266,7 @@ module.exports = {
     update,
     find,
     list,
+    madeBy,
     madeByMe,
     myList,
     remove,
