@@ -8,7 +8,6 @@ const dbConnection = async() => {
             autoIndex: true,
             useNewUrlParser: true,
             useUnifiedTopology: true,
-            useCreateIndex: true
         })
 
 
