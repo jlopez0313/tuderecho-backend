@@ -11,7 +11,7 @@ const dbConnection = async() => {
 
         console.log('DB Online');
     } catch(error) {
-        console.log( error );
+        console.log( 'Error mongo', process.env.DB_CONNECTION, error );
         throw new Error('Error al conectar a la DB');
     }
 }
