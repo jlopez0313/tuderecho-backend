@@ -6,6 +6,9 @@ const dbConnection = async() => {
 
         mongoose.connect(process.env.DB_CONNECTION, {
             autoIndex: true,
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            useCreateIndex: true
         })
 
 
