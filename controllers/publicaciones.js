@@ -17,10 +17,16 @@ const create = async (req, res = express.response) => {
             return;
         }
 
-        const medias = files?.files?.map( file => {
-            const pathUrl = `${ process.env.URL }/publicaciones/${ file.newFilename }`
-            return pathUrl
-        })
+        let medias = []
+
+        if ( files?.files ) {
+            medias = files.files.map( file => {
+                const pathUrl = `${ process.env.URL }/publicaciones/${ file.newFilename }`
+                return pathUrl
+            })
+        } else if ( files ){            
+            medias.push( `${ process.env.URL }/publicaciones/${ file.newFilename }` )
+        }
 
         if( !fields.comunidad ) {
             delete fields.comunidad;
