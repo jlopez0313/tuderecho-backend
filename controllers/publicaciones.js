@@ -9,7 +9,7 @@ const fs = require('fs')
 const create = async (req, res = express.response) => {
 
     const form = formidable({ multiples: true, keepExtensions: true });
-    form.uploadDir = path.join(__dirname, "..", "..", "public", "publicaciones");
+    form.uploadDir = path.join(__dirname, "..", "public", "publicaciones");
 
     form.parse(req, async (err, fields, files) => {
         if (err) {
@@ -36,10 +36,7 @@ const create = async (req, res = express.response) => {
 
         const publicacion = new Publicacion({...fields, medias});
     
-        try {
-
-            console.log('object', fields);
-            
+        try {            
             if ( fields.post ) {
                 const shared = await addShare( fields.user, fields.post )
                 

@@ -10,11 +10,11 @@ const fs = require('fs')
 const create = async (req, res = express.response) => {
 
     const form = formidable({ multiples: true, keepExtensions: true });
-    form.uploadDir = path.join(__dirname, "..", "..", "public", "conferencias");
+    form.uploadDir = path.join(__dirname, "..", "public", "conferencias");
 
     form.parse(req, async (err, fields, files) => {
         if (err) {
-            console.log(err);
+            console.log('error creating', err);
             return;
         }
 
@@ -229,7 +229,7 @@ const find = async(req, res = express.response) => {
 const update = async (req, res = express.response) => {
     const form = formidable({ multiples: true, keepExtensions: true });
     
-    form.uploadDir = path.join(__dirname, "..", "..", "public", "conferencias");
+    form.uploadDir = path.join(__dirname, "..", "public", "conferencias");
 
     form.parse(req, async (err, fields, files) => {
         if (err) {

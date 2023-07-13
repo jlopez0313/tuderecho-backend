@@ -10,7 +10,7 @@ const Usuario = require('../models/Usuario');
 const create = async (req, res = express.response) => {
 
     const form = formidable({ multiples: true, keepExtensions: true });
-    form.uploadDir = path.join(__dirname, "..", "..", "public", "comunidades");
+    form.uploadDir = path.join(__dirname, "..", "public", "comunidades");
 
     form.parse(req, async (err, fields, files) => {
         if (err) {
@@ -228,7 +228,7 @@ const update = async (req, res = express.response) => {
     
     const form = formidable({ multiples: true, keepExtensions: true });
     
-    form.uploadDir = path.join(__dirname, "..", "..", "public", "comunidades");
+    form.uploadDir = path.join(__dirname, "..", "public", "comunidades");
 
     form.parse(req, async (err, fields, files) => {
         if (err) {
