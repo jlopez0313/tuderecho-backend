@@ -19,13 +19,13 @@ const create = async (req, res = express.response) => {
 
         let medias = []
 
-        if ( files?.files ) {
+        if ( files?.files?.length ) {
             medias = files.files.map( file => {
                 const pathUrl = `${ process.env.URL }/publicaciones/${ file.newFilename }`
                 return pathUrl
             })
-        } else if ( files ){            
-            medias.push( `${ process.env.URL }/publicaciones/${ file.newFilename }` )
+        } else if ( files?.files ){
+            medias.push( `${ process.env.URL }/publicaciones/${ files.files.newFilename }` )
         }
 
         if( !fields.comunidad ) {
