@@ -3,7 +3,7 @@ require('dotenv').config();
 const { dbConnection } = require('../database/config');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const { create } = require('../controllers/chat');
+const { create, read } = require('../controllers/chat');
 
 class Server {
     constructor() {
@@ -125,6 +125,13 @@ class Server {
                 this.io.to( room ).emit('getMessage', payload);
                 socket.broadcast.emit('newMessage', payload);
                 await ( create(payload) );
+            })
+
+            socket.on('read', async (payload, callback) => {
+                const { room } = payload;
+                this.io.to( room ).emit('read', payload);
+                socket.broadcast.emit('read', payload);
+                await ( read(payload) );
             })
 
             socket.on('disconnect', () => {

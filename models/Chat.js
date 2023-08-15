@@ -5,6 +5,10 @@ const ChatSchema = Schema({
         type: Schema.Types.ObjectId,
         required: true
     },
+    from: {
+        type: String,
+        required: true
+    },
     to: {
         type: String,
         required: true
@@ -16,7 +20,11 @@ const ChatSchema = Schema({
     text: {
         type: String,
         required: true
-    }
+    },
+    read: {
+        type: Boolean,
+        required: true
+    }, 
 },{
     timestamps: true,
     toJSON: {

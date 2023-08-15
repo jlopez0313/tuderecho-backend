@@ -8,6 +8,7 @@ const path = require('path');
 const fs = require('fs')
 
 const create = async (req, res = express.response) => {
+    const {uid} = req;
 
     const form = formidable({ multiples: true, keepExtensions: true });
     form.uploadDir = path.join(__dirname, "..", "public", "conferencias");
@@ -25,6 +26,14 @@ const create = async (req, res = express.response) => {
         try {
         
             const saved = await conferencia.save();
+
+            await Usuario.findByIdAndUpdate(
+                uid,
+                {
+                    $push: {"conferencias": saved.id }
+                }
+            );
+
             return res.status(201).json({
                 ok: true,
                 saved
@@ -205,7 +214,12 @@ const list = async(req, res = express.response) => {
 
 const find = async(req, res = express.response) => {
     try {
-        const conferencia = await Conferencia.findById(req.params.id);
+        const conferencia = await Conferencia.findById(req.params.id)
+        .populate({
+            path: 'usuarios',
+            select: 'name'
+        });
+
         if ( !conferencia) {
             return res.status(404).json({
                 ok: false,                

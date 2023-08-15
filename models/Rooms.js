@@ -4,6 +4,11 @@ const RoomsSchema = Schema({
     room: {
         type: String,
         required: true
+    },
+    users: {
+        type: [Schema.Types.ObjectId],
+        ref: 'Usuario',
+        required: false
     }
 },{
     timestamps: true,

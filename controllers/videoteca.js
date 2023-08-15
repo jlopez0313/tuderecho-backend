@@ -4,10 +4,20 @@ const Videoteca = require('../models/Videoteca');
 const Usuario = require('../models/Usuario');
 
 const create = async (req, res = express.response) => {
+    const {uid} = req;
+
     const videoteca = new Videoteca( req.body );
     try {
         
         const saved = await videoteca.save();
+
+        await Usuario.findByIdAndUpdate(
+            uid,
+            {
+                $push: {"videoteca": saved.id }
+            }
+        );
+
         return res.status(201).json({
             ok: true,
             saved

@@ -8,6 +8,7 @@ const fs = require('fs');
 const Usuario = require('../models/Usuario');
 
 const create = async (req, res = express.response) => {
+    const {uid} = req;
 
     const form = formidable({ multiples: true, keepExtensions: true });
     form.uploadDir = path.join(__dirname, "..", "public", "comunidades");
@@ -27,7 +28,7 @@ const create = async (req, res = express.response) => {
             const saved = await comunidad.save();
 
             await Usuario.findByIdAndUpdate(
-                req.body.user,
+                uid,
                 {
                     $push: {"comunidades": saved.id }
                 }
