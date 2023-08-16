@@ -13,7 +13,6 @@ const UsuarioSchema = Schema({
     email: {
         type: String,
         required: true,
-        required: true
     },
     password: {
         type: String,
@@ -29,6 +28,10 @@ const UsuarioSchema = Schema({
     },
     isLogged: {
         type: Boolean,
+        required: false,
+    },
+    token: {
+        type: String,
         required: false,
     },
     comunidades: {

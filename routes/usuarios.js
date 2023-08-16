@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const  { check } = require('express-validator');
-const { recovery, passwords, list, paginate, find, create, update, remove } = require('../controllers/usuarios');
+const { recovery, passwords, withToken, list, paginate, find, create, update, remove } = require('../controllers/usuarios');
 const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-token');
 
@@ -13,6 +13,15 @@ router.post(
         validarCampos
     ],
     recovery
+);
+
+router.post(
+    '/with-token',
+    [
+        check('password1', 'El password es obligatorio').not().isEmpty(),
+        validarCampos
+    ],
+    withToken
 );
 
 router.use( validarJWT )

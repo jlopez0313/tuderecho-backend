@@ -20,7 +20,34 @@ const recovery = async (req, res = express.response) => {
             })
         }
 
-        sendEmail(email, 'Olvidaste tu contraseña!', 'Bla bla bla...')
+        const salt = bcrypt.genSaltSync();
+        const token = bcrypt.hashSync(new Date().toString(), salt);
+        await usuario.update({token});
+
+        const url = `${ process.env.FRONTEND }/passwords?temporary_token=${ token }`;
+
+        const html = `
+        <html>
+            <head>
+            </head>
+            <body>
+                <h1> Solicitud de cambio de contraseña. </h1>
+
+                <p> Estimado <b>${ usuario.name }</b>, accede al enlace que se incluye en este mensaje para crear <br />
+                    una contraseña nueva. 
+                </p>
+                <p>
+                    Enlace: <a href="${ url }"> ${ url } </a>
+                </p>
+                <p>
+                    Este enlace solo será válido durante una hora. <br />
+                    Por favor, borra este mensaje si lo has recibido por error.
+                </p>
+            </body>
+        </html>
+        `
+
+        sendEmail(email, 'Olvidaste tu contraseña!', '', html)
         return res.status(201).json({
             ok: true,
             msg: 'Email sent !!'
@@ -60,7 +87,82 @@ const passwords = async (req, res = express.response) => {
         usuario.password = bcrypt.hashSync(password1, salt);
         await usuario.save();
 
-        sendEmail(email, 'Tu contraseña ha cambiado!', 'Tu cambio de contraseña fue satisfactorio!')
+        const html = `
+        <html>
+            <head>
+            </head>
+            <body>
+                <h1> Notificación de cambio de contraseña. </h1>
+
+                <p> Estimado <b>${ usuario.name }</b>, hemos efectuado el cambio de contraseña de tu cuenta ${ usuario.email }. 
+                </p>
+                <p>
+                    Si no realizaste esta acción, por favor comunicate con nosotros al correo <b> correo@corre.com </b>
+                </p>
+            </body>
+        </html>
+        `
+
+        sendEmail(email, 'Tu contraseña ha cambiado!', '', html)
+        
+        return res.status(201).json({
+            ok: true,
+            msg: 'Tu cambio de contraseña fue satisfactorio'
+        })
+
+    } catch(error) {
+        console.log( error )
+        return res.status(500).json({
+            ok: false,
+            msg: 'passwords: Internal Error'
+        })
+    }    
+}
+
+
+const withToken = async (req, res = express.response) => {
+    const {password1, token} = req.body;
+    try {
+
+        let usuario = await Usuario.findOne({token});
+
+        if ( !usuario ) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'El correo no se encuentra registrado'
+            })
+        }
+
+        const tokenValid = token === usuario.token;
+        if ( !tokenValid ) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'El token actual no es valido'
+            })
+        }
+
+        const salt = bcrypt.genSaltSync();
+        usuario.password = bcrypt.hashSync(password1, salt);
+        usuario.token = '';
+        await usuario.save();
+
+        const html = `
+        <html>
+            <head>
+            </head>
+            <body>
+                <h1> Notificación de cambio de contraseña. </h1>
+
+                <p> Estimado <b>${ usuario.name }</b>, hemos efectuado el cambio de contraseña de tu cuenta ${ usuario.email }. 
+                </p>
+                <p>
+                    Si no realizaste esta acción, por favor comunicate con nosotros al correo <b> correo@corre.com </b>
+                </p>
+            </body>
+        </html>
+        `
+
+        sendEmail(usuario.email, 'Tu contraseña ha cambiado!', '', html)
         
         return res.status(201).json({
             ok: true,
@@ -330,6 +432,7 @@ const uploadfromUrl = (photoUrl, resolve, reject) => {
 module.exports = {
     recovery,
     passwords,
+    withToken,
     create,
     update,
     find,
