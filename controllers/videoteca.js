@@ -189,6 +189,8 @@ const update = async (req, res = express.response) => {
     const { name } = req.body;
 
     try {
+        delete req.body.usuarios;
+
         const videoteca = await Videoteca.findByIdAndUpdate(req.params.id, {...req.body}, { new: true });
         if ( !videoteca) {
             return res.status(404).json({

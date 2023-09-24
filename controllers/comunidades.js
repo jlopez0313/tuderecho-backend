@@ -249,7 +249,8 @@ const update = async (req, res = express.response) => {
             
             if ( pathUrl )
                 body.archivo = pathUrl
-
+            
+            delete body.usuarios;
             const comunidad = await Comunidad.findByIdAndUpdate( fields.id, body);
 
             return res.status(201).json({

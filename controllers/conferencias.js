@@ -264,6 +264,7 @@ const update = async (req, res = express.response) => {
             if ( pathUrl )
                 body.archivo = pathUrl
 
+            delete body.usuarios;
             const conferencia = await Conferencia.findByIdAndUpdate( fields.id, body);
 
             return res.status(201).json({
@@ -272,9 +273,10 @@ const update = async (req, res = express.response) => {
             })
     
         } catch(error) {
+            console.log( error );
             return res.status(500).json({
                 ok: false,
-                msg: 'create: Internal Error'
+                msg: 'update: Internal Error'
             })
         }
         
