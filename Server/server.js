@@ -62,6 +62,10 @@ class Server {
                 path: '/api/videoteca',
                 route: '../routes/videoteca',
             },
+            zoom: {
+                path: '/api/zoom',
+                route: '../routes/zoom',
+            },
         }
 
         this.connectToDB();

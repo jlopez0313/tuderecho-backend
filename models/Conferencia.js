@@ -34,6 +34,10 @@ const ConferenciaSchema = Schema({
         type: String,
         required: true
     },
+    url: {
+        type: String,
+        required: true
+    },
     usuarios: {
         type: [Schema.Types.ObjectId],
         ref: 'Usuario',

@@ -7,6 +7,8 @@ const formidable = require('formidable');
 const path = require('path');
 const fs = require('fs')
 
+const { createMeeting } = require('../helpers/zoom');
+
 const create = async (req, res = express.response) => {
     const {uid} = req;
 
@@ -21,7 +23,9 @@ const create = async (req, res = express.response) => {
 
         const pathUrl = `${ process.env.URL }/conferencias/${ files.archivo.newFilename }`
 
-        const conferencia = new Conferencia( {...fields, archivo: pathUrl } );
+        const meeting = await createMeeting('me', fields.access_token, res);
+
+        const conferencia = new Conferencia( {...fields, url: meeting.join_url, archivo: pathUrl } );
 
         try {
         
