@@ -121,6 +121,7 @@ const passwords = async (req, res = express.response) => {
 
 
 const withToken = async (req, res = express.response) => {
+    const {uid} = req;
     const {password1, token} = req.body;
     try {
 
@@ -134,7 +135,7 @@ const withToken = async (req, res = express.response) => {
         }
 
         const tokenValid = token === usuario.token;
-        if ( !tokenValid ) {
+        if ( !uid && !tokenValid ) {
             return res.status(400).json({
                 ok: false,
                 msg: 'El token actual no es valido'

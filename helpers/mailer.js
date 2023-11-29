@@ -5,8 +5,8 @@ const sendEmail = (to, subject, text = '', html = '') => {
         host: 'smtp.gmail.com',
         port: 587,
         auth: {
-            user: 'jonn0313@gmail.com',
-            pass: 'dfufpnaztidjqean'
+            user: 'sabiux29@gmail.com',
+            pass: 'ainz pbll xzat qnml'
         },
         tls: {
             rejectUnauthorized: false
@@ -14,7 +14,7 @@ const sendEmail = (to, subject, text = '', html = '') => {
     });
 
     var mailOptions = {
-        from: 'jonn0313@gmail.com',
+        from: 'sabiux29@gmail.com',
         to: to,
         subject: subject,
         text: text,
