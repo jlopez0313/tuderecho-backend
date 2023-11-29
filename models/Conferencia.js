@@ -16,7 +16,7 @@ const ConferenciaSchema = Schema({
         required: true
     },
     fecha: {
-        type: String,
+        type: Date,
         required: true
     },
     objetivo: {

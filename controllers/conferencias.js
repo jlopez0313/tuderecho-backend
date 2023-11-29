@@ -134,15 +134,15 @@ const myList = async(req, res = express.response) => {
                             conferencista: {$regex: `.*${filter}.*`, $options: 'i'}
                         },
                         {
-                            fecha: {$regex: `.*${filter}.*`, $options: 'i'}
-                        },
-                        {
                             objetivo: {$regex: `.*${filter}.*`, $options: 'i'}
                         },
                     ],
                     $and: [
                         { 
-                            _id: { $in: user.conferencias || [] } 
+                            _id: { $in: user.conferencias || [] },
+                        },
+                        {
+                            fecha: { $gt: new Date() }
                         }
                     ]
                 }
@@ -167,6 +167,8 @@ const myList = async(req, res = express.response) => {
 }
 
 const list = async(req, res = express.response) => {
+
+    console.log( new Date() );
     
     const { uid } = req;
     const filter = req.params?.search || '';
@@ -186,15 +188,15 @@ const list = async(req, res = express.response) => {
                             conferencista: {$regex: `.*${filter}.*`, $options: 'i'}
                         },
                         {
-                            fecha: {$regex: `.*${filter}.*`, $options: 'i'}
-                        },
-                        {
                             objetivo: {$regex: `.*${filter}.*`, $options: 'i'}
                         },
                     ],
                     $and: [
                         { 
-                            _id: { $nin: user.conferencias || [] } 
+                            _id: { $nin: user.conferencias || [] },
+                        },
+                        {
+                            fecha: { $gt: new Date() }
                         }
                     ]
                 }
