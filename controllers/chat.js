@@ -1,11 +1,14 @@
 const express = require('express');
-const Room = require('../models/Rooms');
-const Chat = require('../models/Chat');
+const {getMyModel: getRoomsModel} = require('../models/Rooms');
+const {getMyModel: getChatModel} = require('../models/Chat');
+const {getMyModel: getUsuarioModel} = require('../models/Usuario');
+const {getMyModel: getPerfilModel} = require('../models/Perfil');
 
 const create = async ( data ) => {
     try {
         const roomData = { room: data.room, users: data.room.split('-room-') }
 
+        const Room = await getRoomsModel( data.tenant )
         let room = await Room.findOne( roomData );
         if ( !room ) {
             room = new Room( roomData )
@@ -21,6 +24,7 @@ const create = async ( data ) => {
             sender: data.id,
         }
 
+        const Chat = await getChatModel( data.tenant )
         const saved = new Chat( message );
         await saved.save();
         
@@ -33,9 +37,15 @@ const create = async ( data ) => {
 }
 
 const list = async(req, res = express.response) => {
-    
+    const { tenant } = req
     try {
-        const room = await Room.findOne({room: req.params.id }).populate('chats');
+        const Chat = await getChatModel( tenant )
+        const Room = await getRoomsModel( tenant )
+        const room = await Room.findOne({room: req.params.id })
+            .populate({
+                path: 'chats',
+                model: Chat
+            });
 
         return res.status(200).json({
             ok: true,
@@ -52,9 +62,14 @@ const list = async(req, res = express.response) => {
 }
 
 const all = async(req, res = express.response) => {
-    const {uid} = req;
+    const { uid, tenant } = req
     
     try {
+        const Perfil = await getPerfilModel( tenant )
+        const Usuario = await getUsuarioModel( tenant )
+        const Chat = await getChatModel( tenant )
+        
+        const Room = await getRoomsModel( tenant )
         const rooms = await Room.find(
             {
                 room: {$regex: `.*${uid}.*`, $options: 'i'}
@@ -62,6 +77,7 @@ const all = async(req, res = express.response) => {
         )
         .populate({
             path: 'chats',
+            model: Chat,
             options: {
                 sort: { updatedAt: -1 },
                 limit: 1,
@@ -69,8 +85,10 @@ const all = async(req, res = express.response) => {
         })
         .populate({
             path: 'users',
+            model: Usuario,
             populate: {
                 path: 'perfil',
+                model: Perfil,
                 select: 'photo',
             },
             select: 'name',
@@ -92,8 +110,10 @@ const all = async(req, res = express.response) => {
 }
 
 const read = async( data ) => {
-    try {
+    const { tenant } = req
 
+    try {
+        const Chat = await getChatModel( tenant )
         const saved = await Chat.update(
             {room : data.room, from: data.from, read: false},
             { read: true },

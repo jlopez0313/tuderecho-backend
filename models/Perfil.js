@@ -1,5 +1,6 @@
 const { Schema, model } = require("mongoose");
 const autopopulate = require('mongoose-autopopulate');
+const { getModel } = require("../database/config");
 
 const PerfilSchema = Schema({
     user: {
@@ -81,4 +82,12 @@ PerfilSchema.method('toJSON', function() {
 
 PerfilSchema.plugin(autopopulate);
 
-module.exports = model('Perfil', PerfilSchema)
+const myModel = model('Perfil', PerfilSchema)
+
+const getMyModel = async (tenant) => {
+    return getModel('Perfil', PerfilSchema, tenant)
+}
+
+module.exports = {
+    getMyModel
+}

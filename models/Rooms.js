@@ -1,4 +1,5 @@
 const { Schema, model } = require("mongoose");
+const { getModel } = require("../database/config");
 
 const RoomsSchema = Schema({
     room: {
@@ -33,4 +34,12 @@ RoomsSchema.method('toJSON', function() {
     return object;
 })
 
-module.exports = model('Rooms', RoomsSchema)
+const myModel = model('Rooms', RoomsSchema)
+
+const getMyModel = async (tenant) => {
+    return getModel('Rooms', RoomsSchema, tenant)
+}
+
+module.exports = {
+    getMyModel
+}

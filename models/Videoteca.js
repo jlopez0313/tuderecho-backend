@@ -1,5 +1,6 @@
 const { Schema, model } = require("mongoose");
 const autopopulate = require('mongoose-autopopulate');
+const { getModel } = require("../database/config");
 
 const VideotecaSchema = Schema({
     user: {
@@ -49,4 +50,12 @@ VideotecaSchema.method('toJSON', function() {
 
 VideotecaSchema.plugin(autopopulate);
 
-module.exports = model('Videoteca', VideotecaSchema)
+const myModel = model('Videoteca', VideotecaSchema)
+
+const getMyModel = async (tenant) => {
+    return getModel('Videoteca', VideotecaSchema, tenant)
+}
+
+module.exports = {
+    getMyModel
+}

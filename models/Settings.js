@@ -1,0 +1,37 @@
+const { Schema, model } = require("mongoose");
+const { getModel } = require("../database/config");
+
+const SettingsSchema = Schema({
+    logo: {
+        type: String,
+        required: true
+    },
+    heroe: {
+        type: String,
+        require: true
+    },
+},{
+    timestamps: true,
+    toJSON: {
+        virtuals: true
+    },
+    toObject: {
+        virtuals: true
+    }
+})
+
+SettingsSchema.method('toJSON', function() {
+    const {__V, _id, ...object} = this.toObject();
+    object.id = _id
+    return object;
+})
+
+const myModel = model('Settings', SettingsSchema)
+
+const getMyModel = async (tenant) => {
+    return getModel('Settings', SettingsSchema, tenant)
+}
+
+module.exports = {
+    getMyModel
+}

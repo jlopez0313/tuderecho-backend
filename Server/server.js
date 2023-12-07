@@ -21,52 +21,60 @@ class Server {
             cors: this.corsOptions
         })
 
-        this.paths = {
-            auth: {
+        this.paths = [
+            {
                 path: '/api/auth',
                 route: '../routes/auth',
             },
-            especialidades: {
+            {
                 path: '/api/especialidades',
                 route: '../routes/especialidades',
             },
-            tags: {
+            {
+                path: '/api/tenants',
+                route: '../routes/tenants',
+            },
+            {
                 path: '/api/tags',
                 route: '../routes/tags',
             },
-            chat: {
+            {
                 path: '/api/chat',
                 route: '../routes/chat',
             },
-            comentarios: {
+            {
                 path: '/api/comentarios',
                 route: '../routes/comentarios',
             },
-            comunidades: {
+            {
                 path: '/api/comunidades',
                 route: '../routes/comunidades',
             },
-            conferencias: {
+            {
                 path: '/api/conferencias',
                 route: '../routes/conferencias',
             },
-            publicaciones: {
+            {
                 path: '/api/publicaciones',
                 route: '../routes/publicaciones',
             },
-            usuarios: {
+            {
+                path: '/api/settings',
+                route: '../routes/settings',
+            },
+            {
                 path: '/api/usuarios',
                 route: '../routes/usuarios',
             },
-            videoteca: {
+            {
                 path: '/api/videoteca',
                 route: '../routes/videoteca',
             },
-            zoom: {
+            {
                 path: '/api/zoom',
                 route: '../routes/zoom',
             },
-        }
+        ]
 
         this.connectToDB();
         this.addMiddlewares();
@@ -76,7 +84,7 @@ class Server {
     }
 
     async connectToDB() {
-        await dbConnection();
+        // await dbConnection( process.env.DB_CONNECTION + process.env.DB_NAME );
     }
 
     addMiddlewares() {
@@ -88,8 +96,8 @@ class Server {
     }
 
     setRoutes() {
-        Object.keys(this.paths).forEach(path => {
-            this.app.use( this.paths[path].path, require(this.paths[path].route) );
+        this.paths.forEach( path => {
+            this.app.use( path.path, require(path.route) );
         });
     }
 

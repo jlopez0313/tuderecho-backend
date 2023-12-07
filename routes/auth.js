@@ -6,6 +6,9 @@ const { crearUsuario, loginUsuario, revalidarToken } = require('../controllers/a
 const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-token');
 
+const { validarTenant } = require('../middlewares/validar-tenant');
+router.use( validarTenant )
+
 router.post('/', loginUsuario);
 router.post(
     '/register',

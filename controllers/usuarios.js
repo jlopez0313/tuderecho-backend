@@ -1,16 +1,17 @@
 const express = require('express');
 const { sendEmail } = require('../helpers/mailer');
 const { generarJWT } = require('../helpers/jwt');
-const Usuario = require('../models/Usuario');
-const Perfil = require('../models/Perfil');
 const base64Img = require('base64-img');
 const bcrypt = require('bcryptjs');
-const fs = require('fs')
+const fs = require('fs');
+const {getMyModel: getUsuarioModel} = require('../models/Usuario');
+const {getMyModel: getPerfilModel} = require('../models/Perfil');
 
 const recovery = async (req, res = express.response) => {
+    const {tenant} = req;
     const {email} = req.body;
     try {
-
+        const Usuario = await getUsuarioModel(tenant);
         let usuario = await Usuario.findOne({email});
 
         if ( !usuario ) {
@@ -24,7 +25,7 @@ const recovery = async (req, res = express.response) => {
         const token = bcrypt.hashSync(new Date().toString(), salt);
         await usuario.update({token});
 
-        const url = `${ process.env.FRONTEND }/passwords?temporary_token=${ token }`;
+        const url = `${ process.env.FRONTEND }/${ tenant }/claves?temporary_token=${ token }`;
 
         const html = `
         <html>
@@ -63,9 +64,11 @@ const recovery = async (req, res = express.response) => {
 }
 
 const passwords = async (req, res = express.response) => {
+    const {tenant} = req;
     const {password, password1, email} = req.body;
     try {
 
+        const Usuario = await getUsuarioModel(tenant);
         let usuario = await Usuario.findOne({email});
 
         if ( !usuario ) {
@@ -119,12 +122,11 @@ const passwords = async (req, res = express.response) => {
     }    
 }
 
-
 const withToken = async (req, res = express.response) => {
-    const {uid} = req;
+    const {uid, tenant} = req;
     const {password1, token} = req.body;
     try {
-
+        const Usuario = await getUsuarioModel(tenant);
         let usuario = await Usuario.findOne({token});
 
         if ( !usuario ) {
@@ -180,10 +182,11 @@ const withToken = async (req, res = express.response) => {
 }
 
 const create = async (req, res = express.response) => {
+    const { tenant } = req;
     const { name } = req.body;
     const usuario = new Usuario( req.body );
     try {
-        
+        const Usuario = await getUsuarioModel(tenant);
         let existe = await Usuario.findOne({name});
         console.log('existe', existe)
 
@@ -209,9 +212,13 @@ const create = async (req, res = express.response) => {
 }
 
 const paginate = async(req, res = express.response) => {
+    const {tenant} = req
+
     try {
         const limit = req.query.limit;
         const page = req.query.page - 1
+
+        const Usuario = await getUsuarioModel(tenant);
 
         const usuarios = await Usuario.find()
             .select('-password')
@@ -236,7 +243,10 @@ const paginate = async(req, res = express.response) => {
 }
 
 const list = async(req, res = express.response) => {
+    const {tenant} = req
+
     try {
+        const Usuario = await getUsuarioModel(tenant);
         const usuarios = await Usuario.find()
             .select('-password')
             .sort( { name: 1 } );
@@ -255,11 +265,18 @@ const list = async(req, res = express.response) => {
 }
 
 const find = async(req, res = express.response) => {
+    const {tenant} = req
     
     try {
+        const Perfil = await getPerfilModel(tenant);
+
+        const Usuario = await getUsuarioModel(tenant);
         const usuario = await Usuario.findById(req.params.id)
             .select('-password')
-            .populate('perfil')
+            .populate({
+                path: 'perfil',
+                model: Perfil
+            })
             .lean();
         
         if ( !usuario) {
@@ -290,7 +307,10 @@ const find = async(req, res = express.response) => {
 }
 
 const update = async (req, res = express.response) => {
+    const {tenant} = req
+
     try {
+        const Usuario = await getUsuarioModel(tenant);
         const usuario = await Usuario.findByIdAndUpdate(
             req.params.id, 
             {
@@ -308,7 +328,7 @@ const update = async (req, res = express.response) => {
         const {
             photo,
             oldImage
-        } = req.body.perfil;
+        } = req.body.perfil || { photo: null, oldImage: null } ;
 
         let imageUrl = oldImage;
 
@@ -316,6 +336,7 @@ const update = async (req, res = express.response) => {
             imageUrl = await uploadFile( photo, oldImage );
         }
         
+        const Perfil = await getPerfilModel(tenant);
         let perfil = await Perfil.findOneAndUpdate(
             { 
                 user: req.params.id 
@@ -327,7 +348,7 @@ const update = async (req, res = express.response) => {
             { new: true }
         )
         
-        if ( !perfil) {
+        if ( !perfil) {            
             perfil = new Perfil({ 
                 user: req.params.id,
                 ...req.body.perfil,
@@ -355,7 +376,10 @@ const update = async (req, res = express.response) => {
 }
 
 const remove = async(req, res = express.response) => {
+    const {tenant} = req
+
     try {
+        const Usuario = await getUsuarioModel(tenant);
         const usuario = await Usuario.findByIdAndDelete(req.params.id);
         if ( !usuario) {
             return res.status(404).json({

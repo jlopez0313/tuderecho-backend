@@ -1,14 +1,16 @@
 const express = require('express');
 const { generarJWT } = require('../helpers/jwt');
-const Comunidad = require('../models/Comunidad');
+
+const {getMyModel: getComunidadModel} = require('../models/Comunidad');
+const {getMyModel: getUsuarioModel} = require('../models/Usuario');
+
 
 const formidable = require('formidable');
 const path = require('path');
 const fs = require('fs');
-const Usuario = require('../models/Usuario');
 
 const create = async (req, res = express.response) => {
-    const {uid} = req;
+    const {uid, tenant} = req;
 
     const form = formidable({ multiples: true, keepExtensions: true });
     form.uploadDir = path.join(__dirname, "..", "public", "comunidades");
@@ -21,12 +23,14 @@ const create = async (req, res = express.response) => {
 
         const pathUrl = `${ process.env.URL }/comunidades/${ files.archivo.newFilename }`
 
+        const Comunidad = await getComunidadModel(tenant)
         const comunidad = new Comunidad( {...fields, archivo: pathUrl } );
 
         try {
         
             const saved = await comunidad.save();
 
+            const Usuario = await getUsuarioModel( tenant )
             await Usuario.findByIdAndUpdate(
                 uid,
                 {
@@ -69,9 +73,11 @@ const create = async (req, res = express.response) => {
 }
 
 const madeBy = async(req, res = express.response) => {
+    const { tenant } = req
     
     try {
 
+        const Comunidad = await getComunidadModel(tenant)
         const comunidades = await Comunidad.find({ user: req.params.id })
 
         return res.status(200).json({
@@ -90,10 +96,11 @@ const madeBy = async(req, res = express.response) => {
 }
 
 const madeByMe = async(req, res = express.response) => {
-    const { uid } = req;
+    const { uid, tenant } = req
     
     try {
 
+        const Comunidad = await getComunidadModel(tenant)
         const comunidades = await Comunidad.find({ user: uid })
 
         return res.status(200).json({
@@ -111,15 +118,19 @@ const madeByMe = async(req, res = express.response) => {
     }   
 }
 
-const myList = async(req, res = express.response) => {
-    
-    const { uid } = req;
+const myList = async(req, res = express.response) => {    
+    const { uid, tenant } = req
+
     const filter = req.params?.search || '';
 
     try {
         const limit = req.query.limit;
         const page = req.query.page - 1
+        
+        const Usuario = await getUsuarioModel( tenant )
         const user =  await Usuario.findById( uid );
+        
+        const Comunidad = await getComunidadModel(tenant)
         const comunidades = await Comunidad.find(
                 { 
                     
@@ -158,15 +169,17 @@ const myList = async(req, res = express.response) => {
 }
 
 const list = async(req, res = express.response) => {
-    
-    const { uid } = req;
+    const { uid, tenant } = req
     const filter = req.params?.search || '';
 
     try {
         const limit = req.query.limit;
         const page = req.query.page - 1
+        
+        const Usuario = await getUsuarioModel( tenant )
         const user =  await Usuario.findById( uid );
 
+        const Comunidad = await getComunidadModel(tenant)
         const comunidades = await Comunidad.find(
                 {
                     $or: [
@@ -203,8 +216,12 @@ const list = async(req, res = express.response) => {
 }
 
 const find = async(req, res = express.response) => {
+    const { tenant } = req
+    
     try {
+        const Comunidad = await getComunidadModel(tenant)
         const comunidad = await Comunidad.findById(req.params.id);
+        
         if ( !comunidad) {
             return res.status(404).json({
                 ok: false,                
@@ -226,6 +243,7 @@ const find = async(req, res = express.response) => {
 }
 
 const update = async (req, res = express.response) => {
+    const { tenant } = req
     
     const form = formidable({ multiples: true, keepExtensions: true });
     
@@ -245,12 +263,14 @@ const update = async (req, res = express.response) => {
 
         try {
         
+            delete fields.usuarios;
+
             const body = {...fields }
             
             if ( pathUrl )
-                body.archivo = pathUrl
+                body.archivo = pathUrl            
             
-            delete body.usuarios;
+            const Comunidad = await getComunidadModel(tenant)
             const comunidad = await Comunidad.findByIdAndUpdate( fields.id, body);
 
             return res.status(201).json({
@@ -270,10 +290,12 @@ const update = async (req, res = express.response) => {
 
 const remove = async(req, res = express.response) => {
 
-    const { uid } = req;
+    const { uid, tenant } = req
 
     try {
+        const Comunidad = await getComunidadModel(tenant)
         const comunidad = await Comunidad.findByIdAndDelete(req.params.id);
+        
         if ( !comunidad) {
             return res.status(404).json({
                 ok: false,
@@ -292,6 +314,7 @@ const remove = async(req, res = express.response) => {
             console.log( 'Imagen no existe', comunidad.archivo )
         }
 
+        const Usuario = await getUsuarioModel( tenant )
         await Usuario.findByIdAndUpdate(
             uid,
             {
@@ -314,9 +337,10 @@ const remove = async(req, res = express.response) => {
 }
 
 const subscribe = async (req, res = express.response) => {
-    const { uid } = req;
+    const { uid, tenant } = req
 
     try {
+        const Comunidad = await getComunidadModel(tenant)
         const comunidad = await Comunidad.findByIdAndUpdate(
             req.params.id,
             {
@@ -331,6 +355,7 @@ const subscribe = async (req, res = express.response) => {
             })    
         }
 
+        const Usuario = await getUsuarioModel( tenant )
         await Usuario.findByIdAndUpdate(
             uid,
             {

@@ -1,12 +1,19 @@
 const express = require('express');
 const { generarJWT } = require('../helpers/jwt');
-const Comentario = require('../models/Comentario');
-const Publicacion = require('../models/Publicaciones');
+
+const {getMyModel: getUsuarioModel} = require('../models/Usuario');
+const {getMyModel: getComentarioModel} = require('../models/Comentario');
+const {getMyModel: getPublicacionesModel} = require('../models/Publicaciones');
 
 const create = async (req, res = express.response) => {
-    const comentario = new Comentario( req.body );
+    const { tenant } = req;
     const { parent, publicacionID } = req.body;
+    
     try {
+        const Usuario = await getUsuarioModel(tenant);
+
+        const Comentario = await getComentarioModel(tenant);
+        const comentario = new Comentario( req.body );
 
         const comment = await comentario.save();
         if ( parent ) {
@@ -19,13 +26,22 @@ const create = async (req, res = express.response) => {
 
         let saved = {} ;
         if ( publicacionID ) {
+
+            const Publicacion = await getPublicacionesModel(tenant);
             saved = await Publicacion.findOneAndUpdate(
                 {_id : publicacionID},
                 {$inc : 
                     {'total_comments' : 1}
                 },
                 { new: true }
-            );
+            ).populate({
+                path: 'comentarios',
+                model: Comentario,
+                populate: {
+                    path: 'user',
+                    model: Usuario,                        
+                }
+            });
         }
 
         return res.status(201).json({
@@ -43,7 +59,9 @@ const create = async (req, res = express.response) => {
 }
 
 const list = async(req, res = express.response) => {
+    const {tenant} = req;
     try {
+        const Comentario = await getComentarioModel(tenant);
         const comentarios = await Comentario.find();
 
         return res.status(200).json({
@@ -60,8 +78,11 @@ const list = async(req, res = express.response) => {
 }
 
 const find = async(req, res = express.response) => {
+    const {tenant} = req;
     try {
+        const Comentario = await getComentarioModel(tenant);
         const comentario = await Comentario.findById(req.params.id);
+        
         if ( !comentario) {
             return res.status(404).json({
                 ok: false,
@@ -83,9 +104,11 @@ const find = async(req, res = express.response) => {
 }
 
 const update = async (req, res = express.response) => {
+    const { tenant } = req;
     const { name } = req.body;
 
     try {
+        const Comentario = await getComentarioModel(tenant);
         const comentario = await Comentario.findByIdAndUpdate(
             req.params.id,
             {
@@ -117,8 +140,11 @@ const update = async (req, res = express.response) => {
 }
 
 const remove = async(req, res = express.response) => {
-    const { publicacionID } = req.body;
+    const { tenant} = req;
+    const { publicacionID} = req.body;
+
     try {
+        const Comentario = await getComentarioModel(tenant);
         const comentario = await Comentario.findByIdAndDelete(req.params.id);
         if ( !comentario) {
             return res.status(404).json({
@@ -128,6 +154,7 @@ const remove = async(req, res = express.response) => {
 
         let saved = {} ;
         if ( publicacionID ) {
+            const Publicacion = await getPublicacionesModel(tenant);
             saved = await Publicacion.findOneAndUpdate(
                 {_id : publicacionID},
                 {$inc : 
@@ -151,12 +178,11 @@ const remove = async(req, res = express.response) => {
     } 
 }
 
-
-
 const likes = async (req, res = express.response) => {
-    const {uid} = req;
+    const {uid, tenant} = req;
     
     try {
+        const Comentario = await getComentarioModel(tenant);
         const comentario = await Comentario.findById(req.params.id).lean();
 
         if ( !comentario) {

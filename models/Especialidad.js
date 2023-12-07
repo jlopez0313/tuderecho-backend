@@ -1,4 +1,5 @@
 const { Schema, model } = require("mongoose");
+const { getModel } = require("../database/config");
 
 const EspecialidadSchema = Schema({
     name: {
@@ -21,4 +22,12 @@ EspecialidadSchema.method('toJSON', function() {
     return object;
 })
 
-module.exports = model('Especialidad', EspecialidadSchema)
+const myModel = model('Especialidad', EspecialidadSchema)
+
+const getMyModel = async (tenant) => {
+    return getModel('Especialidad', EspecialidadSchema, tenant)
+}
+
+module.exports = {
+    getMyModel
+}

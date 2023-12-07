@@ -1,21 +1,41 @@
 const mongoose = require('mongoose');
 
-const dbConnection = async() => {
+const dbConnection = async( url ) => {
     try {
-        mongoose.set('strictQuery', false);
-
-        mongoose.connect(process.env.DB_CONNECTION, {
+        
+        const options = {
             autoIndex: true,
             useNewUrlParser: true,
             useUnifiedTopology: true,
+        }
+        
+        return new Promise( async (resolve, reject) => {
+            mongoose.set('strictQuery', false);
+            const connection = await mongoose.createConnection(url, options).asPromise();
+            console.log('DB Online');
+            resolve(connection)
         })
 
-
-        console.log('DB Online');
     } catch(error) {
-        console.log( 'Error mongo', process.env.DB_CONNECTION, error );
+        console.log( 'Error mongo', url, error );
         throw new Error('Error al conectar a la DB');
     }
 }
 
-module.exports = { dbConnection }
+
+let db ;
+const getTenantModel = async (tenant) => {
+    const dbName = `tenant-${tenant}`;
+    db = db ? db : await dbConnection( process.env.DB_CONNECTION)
+    return db.useDb(dbName, {useCache: true});    
+}
+
+const getModel = async (model, schema, tenant) => {
+    const tenantDB = await getTenantModel(tenant);
+    return tenantDB.model(model, schema)
+}
+
+module.exports = {
+    dbConnection,
+    getModel
+}

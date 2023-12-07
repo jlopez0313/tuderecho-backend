@@ -6,6 +6,9 @@ const { recovery, passwords, withToken, list, paginate, find, create, update, re
 const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-token');
 
+const { validarTenant } = require('../middlewares/validar-tenant');
+router.use( validarTenant )
+
 router.post(
     '/recovery',
     [

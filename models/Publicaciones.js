@@ -1,5 +1,6 @@
 const { Schema, model } = require("mongoose");
 const autopopulate = require('mongoose-autopopulate');
+const { getModel } = require("../database/config");
 
 const PublicacionSchema = Schema({
     user: {
@@ -70,9 +71,17 @@ PublicacionSchema.virtual('comentarios', {
     localField: '_id',
     foreignField: 'publicacion',
     justOne: false,
-    autopopulate: true
+    // autopopulate: true
 })
 
 PublicacionSchema.plugin(autopopulate);
 
-module.exports = model('Publicacion', PublicacionSchema)
+const myModel = model('Publicacion', PublicacionSchema)
+
+const getMyModel = async (tenant) => {
+    return getModel('Publicacion', PublicacionSchema, tenant)
+}
+
+module.exports = {
+    getMyModel
+}

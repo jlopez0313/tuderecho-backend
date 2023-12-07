@@ -6,6 +6,9 @@ const { list, find, create, update, remove, likes } = require('../controllers/co
 const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-token');
 
+const { validarTenant } = require('../middlewares/validar-tenant');
+router.use( validarTenant )
+
 router.use( validarJWT )
 
 router.get('/', list);

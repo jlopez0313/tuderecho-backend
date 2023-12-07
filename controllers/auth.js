@@ -1,13 +1,17 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const Usuario = require('../models/Usuario');
+const {getMyModel} = require('../models/Usuario');
+const {getMyModel: getPerfilModel} = require('../models/Perfil');
+
 const { generarJWT } = require('../helpers/jwt');
 const { sendEmail } = require('../helpers/mailer');
 
 const crearUsuario = async (req, res = express.response) => {
+    const {tenant} = req;
     const {name, email, password, provider} = req.body;
+    
     try {
-
+        const Usuario = await getMyModel(tenant);
         let usuario = await Usuario.findOne({email});
 
         if ( usuario ) {
@@ -21,6 +25,10 @@ const crearUsuario = async (req, res = express.response) => {
         const salt = bcrypt.genSaltSync();
         usuario.password = bcrypt.hashSync(password, salt);
         await usuario.save();
+
+        const Perfil = await getPerfilModel(tenant);
+        let perfil = new Perfil({ user: usuario.id })
+        await perfil.save();
 
         const token = await( generarJWT( usuario.id, usuario.name, usuario.rol, usuario.perfil?.photo ) );
 
@@ -43,10 +51,17 @@ const crearUsuario = async (req, res = express.response) => {
 }
 
 const loginUsuario = async(req, res = express.response) => {
+    const {tenant} = req;
     const {email, password} = req.body;
     try {
+        const Perfil = await getPerfilModel(tenant);
 
-        const usuario = await Usuario.findOne({email}).populate('perfil');
+        const Usuario = await getMyModel(tenant);
+        const usuario = await Usuario.findOne({email})
+            .populate({
+                path: 'perfil',
+                model: Perfil
+            });
 
         if ( !usuario ) {
             return res.status(400).json({

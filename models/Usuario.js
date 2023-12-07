@@ -1,5 +1,6 @@
 const { Schema, model } = require("mongoose");
 const autopopulate = require('mongoose-autopopulate');
+const { getModel } = require("../database/config");
 
 const UsuarioSchema = Schema({
     rol: {
@@ -75,4 +76,12 @@ UsuarioSchema.method('toJSON', function() {
 
 UsuarioSchema.plugin(autopopulate);
 
-module.exports = model('Usuario', UsuarioSchema)
+const myModel = model('Usuario', UsuarioSchema)
+
+const getMyModel = async (tenant) => {
+    return getModel('Usuario', UsuarioSchema, tenant)
+}
+
+module.exports = {
+    getMyModel
+}

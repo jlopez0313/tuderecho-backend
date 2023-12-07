@@ -1,11 +1,13 @@
 const express = require('express');
 const { generarJWT } = require('../helpers/jwt');
-const Especialidad = require('../models/Especialidad');
+const {getMyModel} = require('../models/Especialidad');
 
 const create = async (req, res = express.response) => {
+    const { tenant } = req;
     const { name } = req.body;
-    const especialidad = new Especialidad( req.body );
     try {
+        const Especialidad = await getMyModel(tenant);
+        const especialidad = new Especialidad( req.body );
         
         let existe = await Especialidad.findOne({name});
         console.log('existe', existe)
@@ -32,10 +34,12 @@ const create = async (req, res = express.response) => {
 }
 
 const paginate = async(req, res = express.response) => {
+    const { tenant } = req;
     try {
         const limit = req.query.limit;
         const page = req.query.page - 1
 
+        const Especialidad = await getMyModel(tenant);
         const especialidades = await Especialidad.find()
             .sort( { name: 1 } )
             .skip(limit * page)
@@ -58,7 +62,11 @@ const paginate = async(req, res = express.response) => {
 }
 
 const list = async(req, res = express.response) => {
+    const { tenant } = req;
+    
     try {
+
+        const Especialidad = await getMyModel(tenant);
         const especialidades = await Especialidad.find().sort( { name: 1 } );
         
         return res.status(200).json({
@@ -75,8 +83,13 @@ const list = async(req, res = express.response) => {
 }
 
 const find = async(req, res = express.response) => {
+    const { tenant } = req;
+    
     try {
+        
+        const Especialidad = await getMyModel(tenant);
         const especialidad = await Especialidad.findById(req.params.id);
+        
         if ( !especialidad) {
             return res.status(404).json({
                 ok: false,
@@ -98,9 +111,12 @@ const find = async(req, res = express.response) => {
 }
 
 const update = async (req, res = express.response) => {
+    const { tenant } = req;
     const { name } = req.body;
 
     try {
+        
+        const Especialidad = await getMyModel(tenant);
         const especialidad = await Especialidad.findByIdAndUpdate(
             req.params.id,
             {
@@ -132,7 +148,11 @@ const update = async (req, res = express.response) => {
 }
 
 const remove = async(req, res = express.response) => {
+    const { tenant } = req;
+    
     try {
+        
+        const Especialidad = await getMyModel(tenant);
         const especialidad = await Especialidad.findByIdAndDelete(req.params.id);
         if ( !especialidad) {
             return res.status(404).json({

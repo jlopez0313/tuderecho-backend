@@ -6,6 +6,9 @@ const { list, madeBy, madeByMe, myList, search, find, create, update, remove, su
 const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-token');
 
+const { validarTenant } = require('../middlewares/validar-tenant');
+router.use( validarTenant )
+
 router.use( validarJWT )
 
 router.get('/madeByMe', madeByMe);

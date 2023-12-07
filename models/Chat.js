@@ -1,4 +1,5 @@
 const { Schema, model } = require("mongoose");
+const { getModel } = require("../database/config");
 
 const ChatSchema = Schema({
     room: {
@@ -41,4 +42,12 @@ ChatSchema.method('toJSON', function() {
     return object;
 })
 
-module.exports = model('Chat', ChatSchema)
+const myModel = model('Chat', ChatSchema)
+
+const getMyModel = async (tenant) => {
+    return getModel('Chat', ChatSchema, tenant)
+}
+
+module.exports = {
+    getMyModel
+}

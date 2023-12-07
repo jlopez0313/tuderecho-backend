@@ -1,7 +1,7 @@
 const express = require('express');
 const { generarJWT } = require('../helpers/jwt');
-const Conferencia = require('../models/Conferencia');
-const Usuario = require('../models/Usuario');
+const {getMyModel: getConferenciaModel} = require('../models/Conferencia');
+const {getMyModel: getUsuarioModel} = require('../models/Usuario');
 
 const formidable = require('formidable');
 const path = require('path');
@@ -10,7 +10,7 @@ const fs = require('fs')
 const { createMeeting } = require('../helpers/zoom');
 
 const create = async (req, res = express.response) => {
-    const {uid} = req;
+    const {uid, tenant} = req;
 
     const form = formidable({ multiples: true, keepExtensions: true });
     form.uploadDir = path.join(__dirname, "..", "public", "conferencias");
@@ -25,12 +25,14 @@ const create = async (req, res = express.response) => {
 
         const meeting = await createMeeting('me', fields.access_token, res);
 
+        const Conferencia = await getConferenciaModel( tenant )
         const conferencia = new Conferencia( {...fields, url: meeting.join_url, archivo: pathUrl } );
 
         try {
         
             const saved = await conferencia.save();
 
+            const Usuario = await getUsuarioModel( tenant )
             await Usuario.findByIdAndUpdate(
                 uid,
                 {
@@ -73,8 +75,10 @@ const create = async (req, res = express.response) => {
 }
 
 const madeBy = async(req, res = express.response) => {
+    const { tenant } = req
     
     try {
+        const Conferencia = await getConferenciaModel( tenant )
         const conferencias = await Conferencia.find({ user: req.params.id })
 
         return res.status(200).json({
@@ -93,9 +97,10 @@ const madeBy = async(req, res = express.response) => {
 }
 
 const madeByMe = async(req, res = express.response) => {
-    const { uid } = req;
+    const { uid, tenant } = req
     
     try {
+        const Conferencia = await getConferenciaModel( tenant )
         const conferencias = await Conferencia.find({ user: uid })
 
         return res.status(200).json({
@@ -114,7 +119,7 @@ const madeByMe = async(req, res = express.response) => {
 }
 
 const myList = async(req, res = express.response) => {
-    const { uid } = req;
+    const { uid, tenant } = req
     const filter = req.params?.search || '';
 
     try {
@@ -122,7 +127,10 @@ const myList = async(req, res = express.response) => {
         const limit = req.query.limit;
         const page = req.query.page - 1
 
+        const Usuario = await getUsuarioModel( tenant )
         const user =  await Usuario.findById( uid );
+        
+        const Conferencia = await getConferenciaModel( tenant )
         const conferencias = await Conferencia.find(
                 { 
                     
@@ -168,16 +176,17 @@ const myList = async(req, res = express.response) => {
 
 const list = async(req, res = express.response) => {
 
-    console.log( new Date() );
-    
-    const { uid } = req;
+    const { uid, tenant } = req
     const filter = req.params?.search || '';
 
     try {
         const limit = req.query.limit;
         const page = req.query.page - 1
+
+        const Usuario = await getUsuarioModel( tenant )
         const user =  await Usuario.findById( uid );
 
+        const Conferencia = await getConferenciaModel( tenant )
         const conferencias = await Conferencia.find(
                 {
                     $or: [
@@ -219,10 +228,16 @@ const list = async(req, res = express.response) => {
 }
 
 const find = async(req, res = express.response) => {
+    const { tenant } = req
+    
     try {
+        const Usuario = await getUsuarioModel( tenant )
+
+        const Conferencia = await getConferenciaModel( tenant )
         const conferencia = await Conferencia.findById(req.params.id)
         .populate({
             path: 'usuarios',
+            model: Usuario,
             select: 'name'
         });
 
@@ -247,6 +262,8 @@ const find = async(req, res = express.response) => {
 }
 
 const update = async (req, res = express.response) => {
+    const { tenant } = req
+
     const form = formidable({ multiples: true, keepExtensions: true });
     
     form.uploadDir = path.join(__dirname, "..", "public", "conferencias");
@@ -265,12 +282,15 @@ const update = async (req, res = express.response) => {
 
         try {
         
+            delete fields.usuarios;
+            
             const body = {...fields }
             
             if ( pathUrl )
                 body.archivo = pathUrl
 
-            delete body.usuarios;
+
+            const Conferencia = await getConferenciaModel( tenant )
             const conferencia = await Conferencia.findByIdAndUpdate( fields.id, body);
 
             return res.status(201).json({
@@ -290,9 +310,11 @@ const update = async (req, res = express.response) => {
 }
 
 const remove = async(req, res = express.response) => {
-    const { uid } = req;
+    const { uid, tenant } = req
 
     try {
+
+        const Conferencia = await getConferenciaModel( tenant )
         const conferencia = await Conferencia.findByIdAndDelete(req.params.id);
         if ( !conferencia) {
             return res.status(404).json({
@@ -312,6 +334,7 @@ const remove = async(req, res = express.response) => {
             console.log( 'Imagen no existe', conferencia.archivo )
         }
 
+        const Usuario = await getUsuarioModel( tenant )
         await Usuario.findByIdAndUpdate(
             uid,
             {
@@ -333,9 +356,10 @@ const remove = async(req, res = express.response) => {
 }
 
 const subscribe = async (req, res = express.response) => {
-    const { uid } = req;
+    const { uid, tenant } = req
 
     try {
+        const Conferencia = await getConferenciaModel( tenant )
         const conferencia = await Conferencia.findByIdAndUpdate(
             req.params.id,
             {
@@ -350,6 +374,7 @@ const subscribe = async (req, res = express.response) => {
             })    
         }
 
+        const Usuario = await getUsuarioModel( tenant )
         await Usuario.findByIdAndUpdate(
             uid,
             {
