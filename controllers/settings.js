@@ -34,8 +34,9 @@ const update = async (req, res = express.response) => {
 
         const {
             heroe,
-            logo
-        } = req.body || { heroe: null, oldImage: null } ;
+            logo,
+            fondo
+        } = req.body || { heroe: null, logo: null, fondo: null } ;
 
         let heroeUrl = settings?.heroe;
         if ( !heroeUrl || heroe ) {
@@ -47,8 +48,14 @@ const update = async (req, res = express.response) => {
             logoUrl = await uploadFile( logo, settings?.logo );
         }
 
+        let fondoUrl = settings?.fondo;
+        if ( !fondoUrl || fondo ) {
+            fondoUrl = await uploadFile( fondo, settings?.fondo );
+        }
+
         settings.logo = logoUrl;
         settings.heroe = heroeUrl;
+        settings.fondo = fondoUrl;
 
         let saved = {}
 

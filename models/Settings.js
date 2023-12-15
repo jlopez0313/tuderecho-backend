@@ -8,7 +8,11 @@ const SettingsSchema = Schema({
     },
     heroe: {
         type: String,
-        require: true
+        required: true
+    },
+    fondo: {
+        type: String,
+        required: true
     },
 },{
     timestamps: true,
