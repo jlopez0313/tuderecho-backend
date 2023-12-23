@@ -21,14 +21,14 @@ const create = async (req, res = express.response) => {
         if ( existe ) {
             return res.status(400).json({
                 ok: false,
-                msg: 'La etiqueta ya se encuentra registrada'
+                msg: 'El Tenant ya se encuentra registrado'
             })
         }
 
         const saved = await tenant.save();
         
         const rq = {
-            tenant: name,
+            tenant: saved,
             body: {
                 rol: 'Admin',
                 name: 'Admin Admin',
@@ -109,6 +109,30 @@ const list = async(req, res = express.response) => {
         res.status(500).json({
             ok: false,
             msg: 'list: Internal Error'
+        })
+    }   
+}
+
+const findByDomain = async(req, res = express.response) => {
+    try {
+        const TenantModel = await getTenantModel();
+        const tenant = await TenantModel.findOne({domain: req.params.domain});
+        if ( !tenant) {
+            return res.status(404).json({
+                ok: false,                
+                msg: 'El tenant no existe'
+            })    
+        }
+
+        return res.status(200).json({
+            ok: true,
+            tenant
+        })
+
+    } catch(error) {
+        res.status(500).json({
+            ok: false,
+            msg: 'find: Internal Error'
         })
     }   
 }
@@ -200,6 +224,7 @@ module.exports = {
     create,
     update,
     find,
+    findByDomain,
     list,
     paginate,
     remove

@@ -2,15 +2,16 @@ const express = require('express');
 const router = express.Router();
 
 const  { check } = require('express-validator');
-const { list, paginate, find, create, update, remove } = require('../controllers/tenants');
+const { list, paginate, find, findByDomain, create, update, remove } = require('../controllers/tenants');
 const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-token');
+
+router.get('/domain/:domain', findByDomain);
 
 router.use( validarJWT )
 
 router.get('/', list);
 router.get('/paginate', paginate);
-router.get('/:id', find);
 router.post(
     '/',
     [

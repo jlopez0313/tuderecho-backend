@@ -8,7 +8,11 @@ const tenantSchema = Schema({
     name: {
         type: String,
         unique: true
-    },    
+    },
+    domain: {
+        type: String,
+        unique: true
+    },
 },{
     timestamps: true,
     toJSON: {
