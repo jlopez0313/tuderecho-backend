@@ -8,15 +8,14 @@ const { validarJWT } = require('../middlewares/validar-token');
 
 router.get('/domain/:domain', findByDomain);
 
-// router.use( validarJWT )
+router.use( validarJWT )
 
-router.get('/', validarJWT, list);
-router.get('/paginate', validarJWT, paginate);
+router.get('/', list);
+router.get('/paginate', paginate);
 router.post(
     '/',
     [
         check('name', 'El nombre es obligatorio').not().isEmpty(),
-        validarJWT,
         validarCampos
     ],
     create
@@ -26,7 +25,6 @@ router.put(
     '/:id',
     [
         check('name', 'El nombre es obligatorio').not().isEmpty(),
-        validarJWT,
         validarCampos
     ],
     update
@@ -34,7 +32,6 @@ router.put(
 
 router.delete(
     '/:id',
-    validarJWT,
     remove
 );
 
