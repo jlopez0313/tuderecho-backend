@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const  { check } = require('express-validator');
-const { recovery, passwords, withToken, list, paginate, find, create, update, remove } = require('../controllers/usuarios');
+const { recovery, passwords, withToken, list, paginate, find, create, update, remove, byRol } = require('../controllers/usuarios');
 const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-token');
 
@@ -26,6 +26,9 @@ router.post(
     ],
     withToken
 );
+
+router.get('/by-rol', byRol);
+
 
 router.use( validarJWT )
 

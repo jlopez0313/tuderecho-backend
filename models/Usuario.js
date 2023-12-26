@@ -9,7 +9,11 @@ const UsuarioSchema = Schema({
     },
     name: {
         type: String,
-        require: true
+        required: true
+    },
+    pts: {
+        type: Number,
+        required: true
     },
     email: {
         type: String,

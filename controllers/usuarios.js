@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const fs = require('fs');
 const {getMyModel: getUsuarioModel} = require('../models/Usuario');
 const {getMyModel: getPerfilModel} = require('../models/Perfil');
+const {getMyModel: getEspecialidadModel} = require('../models/Especialidad');
 
 const recovery = async (req, res = express.response) => {
     const {tenant} = req;
@@ -184,7 +185,7 @@ const withToken = async (req, res = express.response) => {
 const create = async (req, res = express.response) => {
     const { tenant } = req;
     const { name } = req.body;
-    const usuario = new Usuario( req.body );
+    const usuario = new Usuario( {...req.body, pts: 5} );
     try {
         const Usuario = await getUsuarioModel(tenant);
         let existe = await Usuario.findOne({name});
@@ -227,6 +228,53 @@ const paginate = async(req, res = express.response) => {
             .limit(limit);
 
         const total = await Usuario.find().count();
+
+        return res.status(200).json({
+            ok: true,
+            usuarios,
+            total
+        })
+
+    } catch(error) {
+        res.status(500).json({
+            ok: false,
+            msg: 'list: Internal Error'
+        })
+    }   
+}
+
+const byRol = async(req, res = express.response) => {
+    const {tenant} = req
+
+    try {
+        const limit = req.query.limit;
+        const page = req.query.page - 1
+
+        const Usuario = await getUsuarioModel(tenant);
+        const Perfil = await getPerfilModel(tenant);
+        const Especialidad = await getEspecialidadModel(tenant);
+
+        const usuarios = await Usuario.find({ 
+                rol: req.query.rol,
+                estado: 'A'
+            })
+            .populate({
+                path: 'perfil',
+                model: Perfil,
+                populate:{
+                    path: 'especialidad',
+                    model: Especialidad
+                }
+            })
+            .select('-password')
+            .sort( { pts: 1 } )
+            .skip(limit * page)
+            .limit(limit);
+
+        const total = await Usuario.find({ 
+            rol: req.query.rol,
+            estado: 'A'
+        }).count();
 
         return res.status(200).json({
             ok: true,
@@ -463,5 +511,6 @@ module.exports = {
     find,
     list,
     paginate,
+    byRol,
     remove
 }

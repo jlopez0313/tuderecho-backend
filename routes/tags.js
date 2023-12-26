@@ -9,9 +9,10 @@ const { validarJWT } = require('../middlewares/validar-token');
 const { validarTenant } = require('../middlewares/validar-tenant');
 router.use( validarTenant )
 
+router.get('/', list);
+
 router.use( validarJWT )
 
-router.get('/', list);
 router.get('/paginate', paginate);
 router.get('/:id', find);
 router.post(
