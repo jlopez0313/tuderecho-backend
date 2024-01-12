@@ -33,10 +33,16 @@ const update = async (req, res = express.response) => {
         let settings = await Settings.findOne({}) || {};
 
         const {
+            title,
             heroe,
             logo,
             fondo
-        } = req.body || { heroe: settings?.heroe, logo: settings?.logo, fondo: settings?.fondo } ;
+        } = req.body || {
+                title: settings?.title, 
+                heroe: settings?.heroe,
+                logo: settings?.logo,
+                fondo: settings?.fondo
+            } ;
 
         let heroeUrl = settings?.heroe;
         if ( !heroeUrl || heroe ) {
@@ -53,6 +59,7 @@ const update = async (req, res = express.response) => {
             fondoUrl = await uploadFile( fondo, settings?.fondo );
         }
 
+        settings.title = title;
         settings.logo = logoUrl;
         settings.heroe = heroeUrl;
         settings.fondo = fondoUrl;

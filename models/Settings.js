@@ -2,6 +2,10 @@ const { Schema, model } = require("mongoose");
 const { getModel } = require("../database/config");
 
 const SettingsSchema = Schema({
+    title: {
+        type: String,
+        // required: true
+    },
     logo: {
         type: String,
         // required: true
