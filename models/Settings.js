@@ -4,15 +4,15 @@ const { getModel } = require("../database/config");
 const SettingsSchema = Schema({
     logo: {
         type: String,
-        required: true
+        // required: true
     },
     heroe: {
         type: String,
-        required: true
+        // required: true
     },
     fondo: {
         type: String,
-        required: true
+        // required: true
     },
 },{
     timestamps: true,

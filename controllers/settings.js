@@ -30,13 +30,13 @@ const update = async (req, res = express.response) => {
     try {
 
         const Settings = await getMyModel(tenant);
-        let settings = await Settings.findOne({})  || {};
+        let settings = await Settings.findOne({}) || {};
 
         const {
             heroe,
             logo,
             fondo
-        } = req.body || { heroe: null, logo: null, fondo: null } ;
+        } = req.body || { heroe: settings?.heroe, logo: settings?.logo, fondo: settings?.fondo } ;
 
         let heroeUrl = settings?.heroe;
         if ( !heroeUrl || heroe ) {
