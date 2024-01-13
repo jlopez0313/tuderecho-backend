@@ -79,6 +79,10 @@ const passwords = async (req, res = express.response) => {
             })
         }
 
+        if (!usuario.pts) {
+            usuario.pts = 5;
+        }
+
         const passwowrdValid = bcrypt.compareSync(password, usuario.password);
         if ( !passwowrdValid ) {
             return res.status(400).json({
