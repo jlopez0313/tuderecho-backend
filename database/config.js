@@ -7,6 +7,8 @@ const dbConnection = async( url ) => {
             autoIndex: true,
             useNewUrlParser: true,
             useUnifiedTopology: true,
+            ssl: true,
+            tls: true            
         }
         
         return new Promise( async (resolve, reject) => {
@@ -21,6 +23,17 @@ const dbConnection = async( url ) => {
         throw new Error('Error al conectar a la DB');
     }
 }
+
+const closeConnection = async () => {
+    try {
+        await mongoose.disconnect();
+        console.log("db connection closed");
+        return true;       
+    } catch (error) {
+      console.log("Error in closeConnection => ", error);
+      return false;
+    } 
+  };
 
 
 let db ;
@@ -37,5 +50,6 @@ const getModel = async (model, schema, tenant) => {
 
 module.exports = {
     dbConnection,
+    closeConnection,
     getModel
 }
