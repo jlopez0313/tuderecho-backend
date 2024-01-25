@@ -50,6 +50,9 @@ const recovery = async (req, res = express.response) => {
         `
 
         sendEmail(email, 'Olvidaste tu contraseña!', '', html)
+
+        closeConnection();
+
         return res.status(201).json({
             ok: true,
             msg: 'Email sent !!'
@@ -113,6 +116,8 @@ const passwords = async (req, res = express.response) => {
 
         sendEmail(email, 'Tu contraseña ha cambiado!', '', html)
         
+        closeConnection();
+
         return res.status(201).json({
             ok: true,
             msg: 'Tu cambio de contraseña fue satisfactorio'
@@ -172,6 +177,8 @@ const withToken = async (req, res = express.response) => {
 
         sendEmail(usuario.email, 'Tu contraseña ha cambiado!', '', html)
         
+        closeConnection();
+
         return res.status(201).json({
             ok: true,
             msg: 'Tu cambio de contraseña fue satisfactorio'
@@ -203,6 +210,9 @@ const create = async (req, res = express.response) => {
         }
 
         const saved = await usuario.save();
+
+        closeConnection();
+
         return res.status(201).json({
             ok: true,
             saved
@@ -232,6 +242,8 @@ const paginate = async(req, res = express.response) => {
             .limit(limit);
 
         const total = await Usuario.find().count();
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,
@@ -280,6 +292,8 @@ const byRol = async(req, res = express.response) => {
             estado: 'A'
         }).count();
 
+        closeConnection();
+
         return res.status(200).json({
             ok: true,
             usuarios,
@@ -302,6 +316,8 @@ const list = async(req, res = express.response) => {
         const usuarios = await Usuario.find()
             .select('-password')
             .sort( { name: 1 } );
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,
@@ -343,6 +359,8 @@ const find = async(req, res = express.response) => {
         if ( usuario.perfil ) {
             usuario.perfil.oldImage = usuario.perfil.photo;            
         }
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,
@@ -413,6 +431,8 @@ const update = async (req, res = express.response) => {
         usuario.perfil = {...perfil};
         usuario.perfil.oldImage = imageUrl
         
+        closeConnection();
+
         return res.status(200).json({
             ok: true,
             usuario
@@ -433,6 +453,9 @@ const remove = async(req, res = express.response) => {
     try {
         const Usuario = await getUsuarioModel(tenant);
         const usuario = await Usuario.findByIdAndDelete(req.params.id);
+        
+        closeConnection();
+
         if ( !usuario) {
             return res.status(404).json({
                 ok: false,

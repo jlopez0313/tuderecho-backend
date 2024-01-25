@@ -27,6 +27,8 @@ const create = async ( data ) => {
         const Chat = await getChatModel( data.tenant )
         const saved = new Chat( message );
         await saved.save();
+
+        closeConnection();
         
         return true ;
 
@@ -46,6 +48,8 @@ const list = async(req, res = express.response) => {
                 path: 'chats',
                 model: Chat
             });
+
+        closeConnection();        
 
         return res.status(200).json({
             ok: true,
@@ -95,6 +99,8 @@ const all = async(req, res = express.response) => {
         })
         .sort( { updatedAt: -1 } )
 
+        closeConnection();
+
         return res.status(200).json({
             ok: true,
             rooms
@@ -121,6 +127,8 @@ const read = async( data ) => {
         );
         await saved.save();
         
+        closeConnection();
+
         return true ;
     } catch (error) {
         console.log( error )

@@ -62,6 +62,8 @@ const create = async (req, res = express.response) => {
             
             const saved = await publicacion.save();
 
+            closeConnection();
+
             return res.status(201).json({
                 ok: true,
                 saved
@@ -145,6 +147,8 @@ const list = async(req, res = express.response) => {
             .skip(limit * page)
             .limit(limit)
 
+        closeConnection();
+
         return res.status(200).json({
             ok: true,
             publicaciones
@@ -170,6 +174,8 @@ const find = async(req, res = express.response) => {
                 msg: 'El Publicacion no existe'
             })    
         }
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,
@@ -199,6 +205,8 @@ const update = async (req, res = express.response) => {
                 message: 'La publicación no existe'
             })    
         }
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,
@@ -239,6 +247,7 @@ const remove = async(req, res = express.response) => {
             }
         })
 
+        closeConnection();
 
         return res.status(200).json({
             ok: true,
@@ -284,6 +293,8 @@ const likes = async (req, res = express.response) => {
             query,
             { new: true, upsert: true }
         )
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,

@@ -20,6 +20,9 @@ const create = async (req, res = express.response) => {
         }
 
         const saved = await tag.save();
+
+        closeConnection();
+
         return res.status(201).json({
             ok: true,
             saved
@@ -48,6 +51,8 @@ const paginate = async(req, res = express.response) => {
 
         const total = await Tag.find().count();
         
+        closeConnection();
+
         return res.status(200).json({
             ok: true,
             tags,
@@ -68,6 +73,8 @@ const list = async(req, res = express.response) => {
     try {
         const Tag = await getMyModel(tenant);
         const tags = await Tag.find().sort( { name: 1 } );
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,
@@ -94,6 +101,8 @@ const find = async(req, res = express.response) => {
                 msg: 'El Tag no existe'
             })    
         }
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,
@@ -131,6 +140,8 @@ const update = async (req, res = express.response) => {
             })    
         }
 
+        closeConnection();
+
         return res.status(200).json({
             ok: true,
             tag
@@ -156,6 +167,8 @@ const remove = async(req, res = express.response) => {
                 message: 'La etiqueta no existe'
             })    
         }
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,

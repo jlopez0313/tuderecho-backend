@@ -44,6 +44,8 @@ const create = async (req, res = express.response) => {
             });
         }
 
+        closeConnection();
+
         return res.status(201).json({
             ok: true,
             saved
@@ -63,6 +65,8 @@ const list = async(req, res = express.response) => {
     try {
         const Comentario = await getComentarioModel(tenant);
         const comentarios = await Comentario.find();
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,
@@ -89,6 +93,8 @@ const find = async(req, res = express.response) => {
                 msg: 'El Comentario no existe'
             })    
         }
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,
@@ -125,6 +131,8 @@ const update = async (req, res = express.response) => {
                 msg: 'El Comentario no existe'
             })    
         }
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,
@@ -163,6 +171,8 @@ const remove = async(req, res = express.response) => {
                 { new: true }
             );
         }
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,
@@ -209,6 +219,8 @@ const likes = async (req, res = express.response) => {
             query,
             { new: true, upsert: true }
         )
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,

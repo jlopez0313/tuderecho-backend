@@ -38,6 +38,8 @@ const create = async (req, res = express.response) => {
                 }
             );
 
+            closeConnection();
+
             return res.status(201).json({
                 ok: true,
                 saved
@@ -80,6 +82,8 @@ const madeBy = async(req, res = express.response) => {
         const Comunidad = await getComunidadModel(tenant)
         const comunidades = await Comunidad.find({ user: req.params.id })
 
+        closeConnection();
+
         return res.status(200).json({
             ok: true,
             comunidades
@@ -102,6 +106,8 @@ const madeByMe = async(req, res = express.response) => {
 
         const Comunidad = await getComunidadModel(tenant)
         const comunidades = await Comunidad.find({ user: uid })
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,
@@ -153,6 +159,8 @@ const myList = async(req, res = express.response) => {
             .skip(limit * page)
             .limit(limit)
 
+        closeConnection();
+
         return res.status(200).json({
             ok: true,
             comunidades
@@ -201,6 +209,8 @@ const list = async(req, res = express.response) => {
             .skip(limit * page)
             .limit(limit)
 
+        closeConnection();
+
         return res.status(200).json({
             ok: true,
             comunidades
@@ -228,6 +238,8 @@ const find = async(req, res = express.response) => {
                 msg: 'La comunidad no existe'
             })    
         }
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,
@@ -272,6 +284,8 @@ const update = async (req, res = express.response) => {
             
             const Comunidad = await getComunidadModel(tenant)
             const comunidad = await Comunidad.findByIdAndUpdate( fields.id, body);
+
+            closeConnection();
 
             return res.status(201).json({
                 ok: true,
@@ -322,6 +336,7 @@ const remove = async(req, res = express.response) => {
             }
         );
 
+        closeConnection();
 
         return res.status(200).json({
             ok: true,
@@ -362,6 +377,8 @@ const subscribe = async (req, res = express.response) => {
                 $push: {"comunidades": comunidad.id }
             }
         );
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,

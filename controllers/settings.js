@@ -10,6 +10,8 @@ const find = async(req, res = express.response) => {
         const Settings = await getMyModel(tenant);
         const settings = await Settings.findOne({}) || {};
         
+        closeConnection();
+
         return res.status(200).json({
             ok: true,
             settings
@@ -72,6 +74,8 @@ const update = async (req, res = express.response) => {
 
         saved = await settings.save();
         
+        closeConnection();
+
         return res.status(201).json({
             ok: true,
             saved

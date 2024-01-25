@@ -20,6 +20,8 @@ const create = async (req, res = express.response) => {
             }
         );
 
+        closeConnection();
+
         return res.status(201).json({
             ok: true,
             saved
@@ -40,6 +42,8 @@ const madeBy = async(req, res = express.response) => {
     try {
         const Videoteca = await getVideotecaModel(tenant);
         const videoteca = await Videoteca.find({ user: req.params.id })
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,
@@ -62,6 +66,8 @@ const madeByMe = async(req, res = express.response) => {
     try {
         const Videoteca = await getVideotecaModel(tenant);
         const videoteca = await Videoteca.find({ user: uid })
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,
@@ -112,6 +118,8 @@ const myList = async(req, res = express.response) => {
             .skip(limit * page)
             .limit(limit)
 
+        closeConnection();
+
         return res.status(200).json({
             ok: true,
             videoteca
@@ -161,6 +169,8 @@ const list = async(req, res = express.response) => {
             .skip(limit * page)
             .limit(limit)
 
+        closeConnection();
+
         return res.status(200).json({
             ok: true,
             videoteca
@@ -186,6 +196,8 @@ const find = async(req, res = express.response) => {
                 msg: 'La videoteca no existe'
             })    
         }
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,
@@ -217,6 +229,8 @@ const update = async (req, res = express.response) => {
             })    
         }
 
+        closeConnection();
+
         return res.status(200).json({
             ok: true,
             videoteca
@@ -242,6 +256,8 @@ const remove = async(req, res = express.response) => {
                 message: 'La videoteca no existe'
             })    
         }
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,
@@ -281,6 +297,8 @@ const subscribe = async (req, res = express.response) => {
                 $push: {"videoteca": videoteca.id }
             }
         );
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,

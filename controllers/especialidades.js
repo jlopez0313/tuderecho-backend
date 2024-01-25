@@ -20,6 +20,9 @@ const create = async (req, res = express.response) => {
         }
 
         const saved = await especialidad.save();
+
+        closeConnection();
+
         return res.status(201).json({
             ok: true,
             saved
@@ -47,6 +50,8 @@ const paginate = async(req, res = express.response) => {
 
         const total = await Especialidad.find().count();
 
+        closeConnection();
+
         return res.status(200).json({
             ok: true,
             especialidades,
@@ -69,6 +74,8 @@ const list = async(req, res = express.response) => {
         const Especialidad = await getMyModel(tenant);
         const especialidades = await Especialidad.find().sort( { name: 1 } );
         
+        closeConnection();
+
         return res.status(200).json({
             ok: true,
             especialidades
@@ -96,6 +103,8 @@ const find = async(req, res = express.response) => {
                 msg: 'La Especialidad no existe'
             })    
         }
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,
@@ -134,6 +143,8 @@ const update = async (req, res = express.response) => {
             })    
         }
 
+        closeConnection();
+
         return res.status(200).json({
             ok: true,
             especialidad
@@ -159,6 +170,8 @@ const remove = async(req, res = express.response) => {
                 ok: false,
             })    
         }
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,

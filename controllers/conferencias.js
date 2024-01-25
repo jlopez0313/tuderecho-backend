@@ -40,6 +40,8 @@ const create = async (req, res = express.response) => {
                 }
             );
 
+            closeConnection();
+
             return res.status(201).json({
                 ok: true,
                 saved
@@ -81,6 +83,8 @@ const madeBy = async(req, res = express.response) => {
         const Conferencia = await getConferenciaModel( tenant )
         const conferencias = await Conferencia.find({ user: req.params.id })
 
+        closeConnection();
+
         return res.status(200).json({
             ok: true,
             conferencias
@@ -102,6 +106,8 @@ const madeByMe = async(req, res = express.response) => {
     try {
         const Conferencia = await getConferenciaModel( tenant )
         const conferencias = await Conferencia.find({ user: uid })
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,
@@ -159,6 +165,8 @@ const myList = async(req, res = express.response) => {
             .skip(limit * page)
             .limit(limit)
 
+        closeConnection();
+
         return res.status(200).json({
             ok: true,
             conferencias
@@ -214,6 +222,8 @@ const list = async(req, res = express.response) => {
             .skip(limit * page)
             .limit(limit)
 
+        closeConnection();
+
         return res.status(200).json({
             ok: true,
             conferencias
@@ -247,6 +257,8 @@ const find = async(req, res = express.response) => {
                 msg: 'La conferencia no existe'
             })    
         }
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,
@@ -292,6 +304,8 @@ const update = async (req, res = express.response) => {
 
             const Conferencia = await getConferenciaModel( tenant )
             const conferencia = await Conferencia.findByIdAndUpdate( fields.id, body);
+
+            closeConnection();
 
             return res.status(201).json({
                 ok: true,
@@ -342,6 +356,8 @@ const remove = async(req, res = express.response) => {
             }
         );
         
+        closeConnection();
+
         return res.status(200).json({
             ok: true,
             conferencia
@@ -381,6 +397,8 @@ const subscribe = async (req, res = express.response) => {
                 $push: {"conferencias": conferencia.id }
             }
         );
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,

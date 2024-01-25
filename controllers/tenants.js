@@ -124,6 +124,8 @@ const findByDomain = async(req, res = express.response) => {
             })    
         }
 
+        closeConnection();
+
         return res.status(200).json({
             ok: true,
             tenant
@@ -147,6 +149,8 @@ const find = async(req, res = express.response) => {
                 msg: 'El tenant no existe'
             })    
         }
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,
@@ -183,6 +187,8 @@ const update = async (req, res = express.response) => {
             })    
         }
 
+        closeConnection();
+
         return res.status(200).json({
             ok: true,
             tenant
@@ -206,6 +212,8 @@ const remove = async(req, res = express.response) => {
                 message: 'La etiqueta no existe'
             })    
         }
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,
