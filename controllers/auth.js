@@ -5,6 +5,7 @@ const {getMyModel: getPerfilModel} = require('../models/Perfil');
 
 const { generarJWT } = require('../helpers/jwt');
 const { sendEmail } = require('../helpers/mailer');
+const { closeConnection } = require('../database/config');
 
 const crearUsuario = async (req, res = express.response) => {
     const {tenant} = req;
@@ -35,6 +36,8 @@ const crearUsuario = async (req, res = express.response) => {
         if ( provider === 'GMAIL' ) {
             sendEmail(email, 'Bienvenido!', 'Mensaje de bienvenida a Tu Derecho!')
         }
+
+        closeConnection();
 
         return res.status(201).json({
             ok: true,
@@ -83,6 +86,8 @@ const loginUsuario = async(req, res = express.response) => {
 
         const token = await( generarJWT( usuario.id, usuario.name, usuario.rol, usuario.perfil?.photo ) );
         
+        closeConnection();
+
         return res.status(200).json({
             ok: true,
             usuario,
