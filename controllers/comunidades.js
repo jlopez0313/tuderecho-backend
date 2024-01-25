@@ -3,6 +3,7 @@ const { generarJWT } = require('../helpers/jwt');
 
 const {getMyModel: getComunidadModel} = require('../models/Comunidad');
 const {getMyModel: getUsuarioModel} = require('../models/Usuario');
+const { closeConnection } = require('../database/config');
 
 
 const formidable = require('formidable');

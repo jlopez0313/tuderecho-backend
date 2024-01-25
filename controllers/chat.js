@@ -3,6 +3,7 @@ const {getMyModel: getRoomsModel} = require('../models/Rooms');
 const {getMyModel: getChatModel} = require('../models/Chat');
 const {getMyModel: getUsuarioModel} = require('../models/Usuario');
 const {getMyModel: getPerfilModel} = require('../models/Perfil');
+const { closeConnection } = require('../database/config');
 
 const create = async ( data ) => {
     try {

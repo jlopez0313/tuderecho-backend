@@ -4,6 +4,7 @@ const { generarJWT } = require('../helpers/jwt');
 const {getMyModel: getUsuarioModel} = require('../models/Usuario');
 const {getMyModel: getComentarioModel} = require('../models/Comentario');
 const {getMyModel: getPublicacionesModel} = require('../models/Publicaciones');
+const { closeConnection } = require('../database/config');
 
 const create = async (req, res = express.response) => {
     const { tenant } = req;

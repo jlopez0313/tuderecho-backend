@@ -7,6 +7,7 @@ const fs = require('fs');
 const {getMyModel: getUsuarioModel} = require('../models/Usuario');
 const {getMyModel: getPerfilModel} = require('../models/Perfil');
 const {getMyModel: getEspecialidadModel} = require('../models/Especialidad');
+const { closeConnection } = require('../database/config');
 
 const recovery = async (req, res = express.response) => {
     const {tenant} = req;

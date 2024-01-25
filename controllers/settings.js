@@ -2,6 +2,7 @@ const express = require('express');
 const base64Img = require('base64-img');
 const fs = require('fs');
 const {getMyModel} = require('../models/Settings');
+const { closeConnection } = require('../database/config');
 
 const find = async(req, res = express.response) => {
     const {tenant} = req

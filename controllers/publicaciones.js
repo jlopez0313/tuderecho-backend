@@ -6,6 +6,7 @@ const {getMyModel: getVideotecaModel } = require('../models/Videoteca');
 const {getMyModel: getPerfilModel } = require('../models/Perfil');
 const {getMyModel: getUsuarioModel } = require('../models/Usuario');
 const {getMyModel: getComentarioModel } = require('../models/Comentario');
+const { closeConnection } = require('../database/config');
 
 const formidable = require('formidable');
 const path = require('path');

@@ -3,6 +3,7 @@ const { getTenantModel } = require('../models/Tenant');
 
 const {getMyModel} = require('../models/Usuario');
 const {getMyModel: getPerfilModel} = require('../models/Perfil');
+const { closeConnection } = require('../database/config');
 
 const { sendEmail } = require('../helpers/mailer');
 const bcrypt = require('bcryptjs');

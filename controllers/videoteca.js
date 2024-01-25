@@ -2,6 +2,7 @@ const express = require('express');
 const { generarJWT } = require('../helpers/jwt');
 const {getMyModel: getVideotecaModel} = require('../models/Videoteca');
 const {getMyModel: getUsuarioModel} = require('../models/Usuario');
+const { closeConnection } = require('../database/config');
 
 const create = async (req, res = express.response) => {
     const {uid, tenant} = req;

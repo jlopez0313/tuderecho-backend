@@ -1,5 +1,6 @@
 const axios = require('axios');
 const express = require('express');
+const { closeConnection } = require('../database/config');
 
 const auth = async(req, res = express.response) => {
     const config = {
