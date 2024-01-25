@@ -15,6 +15,9 @@ const auth = async(req, res = express.response) => {
 
     axios.request(config)
     .then((response) => {
+
+        closeConnection();
+
         return res.status(201).json({
             ok: true,
             response: response.data

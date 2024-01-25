@@ -53,6 +53,8 @@ const create = async (req, res = express.response) => {
         if ( usuario.provider === 'GMAIL' ) {
             sendEmail(usuario.email, 'Bienvenido!', 'Mensaje de bienvenida a Tu Derecho!')
         }
+
+        closeConnection();
         
         return res.status(201).json({
             ok: true,
@@ -81,6 +83,8 @@ const paginate = async(req, res = express.response) => {
             .limit(limit);
 
         const total = await TenantModel.find().count();
+
+        closeConnection();
         
         return res.status(200).json({
             ok: true,
@@ -100,6 +104,8 @@ const list = async(req, res = express.response) => {
     try {
         const TenantModel = await getTenantModel();
         const tenants = await TenantModel.find().sort( { name: 1 } );
+
+        closeConnection();
 
         return res.status(200).json({
             ok: true,

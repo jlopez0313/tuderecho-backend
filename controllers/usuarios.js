@@ -463,6 +463,8 @@ const remove = async(req, res = express.response) => {
             })    
         }
 
+        closeConnection();
+
         return res.status(200).json({
             ok: true,
             usuario

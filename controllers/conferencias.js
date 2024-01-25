@@ -62,6 +62,9 @@ const create = async (req, res = express.response) => {
     try {
         
         const saved = await conferencia.save();
+
+        closeConnection();
+
         return res.status(201).json({
             ok: true,
             saved
