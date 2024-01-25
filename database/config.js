@@ -26,8 +26,10 @@ const dbConnection = async( url ) => {
 
 const closeConnection = async () => {
     try {
-        await mongoose.disconnect();
         console.log("db connection closed");
+        if ( mongoose.connection.readyState) {
+            await mongoose.disconnect();
+        }
         return true;       
     } catch (error) {
       console.log("Error in closeConnection => ", error);
