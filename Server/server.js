@@ -2,7 +2,7 @@ const express = require('express');
 require('dotenv').config();
 const { dbConnection } = require('../database/config');
 const cors = require('cors');
-const bodyParser = require('body-parser');
+// const bodyParser = require('body-parser');
 const { create, read } = require('../controllers/chat');
 
 class Server {
