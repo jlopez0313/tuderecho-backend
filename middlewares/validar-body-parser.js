@@ -18,7 +18,10 @@ const validarBodyParser = (req, res=express.response, next) => {
         }
     })
 
-    if ( hasLink ) next();
+    if ( hasLink ){ 
+        console.log('object has url');
+        next();
+    }
     else bodyParse(req, res, next);
 }
 

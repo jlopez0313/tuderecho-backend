@@ -1,5 +1,6 @@
 .env
 # public folder
+public/
 
 # Logs
 logs
