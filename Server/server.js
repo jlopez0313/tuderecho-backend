@@ -91,7 +91,7 @@ class Server {
         this.app.use( cors() );
         this.app.use( express.static('public') )
         this.app.use( express.urlencoded({ extended: false }) );
-        this.app.use( bodyParser.json({ limit: '250mb' }) );
+        // this.app.use( bodyParser.json({ limit: '250mb' }) );
 
         // this.app.use( express.json({ limit: '250mb' }) );
 

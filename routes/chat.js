@@ -5,6 +5,9 @@ const { list, all } = require('../controllers/chat');
 const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-token');
 
+const { validarBodyParser } = require('../middlewares/validar-body-parser');
+router.use( validarBodyParser )
+
 const { validarTenant } = require('../middlewares/validar-tenant');
 router.use( validarTenant )
 

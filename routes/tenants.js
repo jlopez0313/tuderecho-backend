@@ -6,6 +6,9 @@ const { list, paginate, find, findByDomain, create, update, remove } = require('
 const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-token');
 
+const { validarBodyParser } = require('../middlewares/validar-body-parser');
+router.use( validarBodyParser )
+
 router.get('/domain/:domain', findByDomain);
 
 router.use( validarJWT )
