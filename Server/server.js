@@ -2,7 +2,7 @@ const express = require('express');
 require('dotenv').config();
 const { dbConnection } = require('../database/config');
 const cors = require('cors');
-// const bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 const { create, read } = require('../controllers/chat');
 
 class Server {
@@ -91,7 +91,9 @@ class Server {
         this.app.use( cors() );
         this.app.use( express.static('public') )
         this.app.use( express.urlencoded({ extended: false }) );
-        this.app.use( express.json({ limit: '250mb' }) );
+        this.app.use( bodyParser.json({ limit: '250mb' }) );
+
+        // this.app.use( express.json({ limit: '250mb' }) );
 
     }
 
