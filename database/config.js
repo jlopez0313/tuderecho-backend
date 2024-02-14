@@ -8,7 +8,7 @@ const dbConnection = async( url ) => {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             ssl: true,
-            tls: true            
+            tls: true
         }
         
         return new Promise( async (resolve, reject) => {

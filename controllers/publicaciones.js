@@ -11,6 +11,7 @@ const { closeConnection } = require('../database/config');
 const formidable = require('formidable');
 const path = require('path');
 const fs = require('fs');
+const { uploadFile } = require('../helpers/files');
 
 const create = async (req, res = express.response) => {
 
@@ -18,6 +19,62 @@ const create = async (req, res = express.response) => {
 
     const form = formidable({ multiples: true, keepExtensions: true });
     form.uploadDir = path.join(__dirname, "..", "public", "publicaciones");
+
+    const {fields, files} = req;
+    
+    if( !fields.comunidad ) {
+        delete fields.comunidad;
+    }
+
+    if( !fields.conferencia ) {
+        delete fields.conferencia;
+    }
+
+    if( !fields.videoteca ) {
+        delete fields.videoteca;
+    }
+
+    const medias = []
+
+    if ( files?.files?.length ) {
+        files.files.forEach( async( file ) => {
+            medias.push( await uploadFile( file.path, file.type, 'public/publicaciones/') )
+        })
+    } else if ( files?.files ){
+        medias.push( await uploadFile( files.files.path, files.files.type, 'public/publicaciones/') )
+    }
+
+    const campos = {...fields};
+    const Publicacion = await getMyModel( tenant )
+    const publicacion = new Publicacion({...campos, medias});
+
+    try {            
+        if ( campos.post ) {
+            const shared = await addShare( tenant, campos.user, campos.post )
+            
+            if (!shared ) {
+                throw new Error('Post Not Found')
+            }
+        }
+        
+        const saved = await publicacion.save();
+
+        closeConnection();
+
+        return res.status(201).json({
+            ok: true,
+            saved
+        })
+
+    } catch(error) {
+        console.log( 'Creating', error )
+        return res.status(500).json({
+            ok: false,
+            msg: 'create: Internal Error'
+        })
+    }
+
+
 
     form.parse(req, async (err, fields, files) => {
         if (err) {
@@ -83,7 +140,7 @@ const create = async (req, res = express.response) => {
 
 const list = async(req, res = express.response) => {
     const { tenant } = req
-    const { comunidad } = req.body
+    const { comunidad } = req.fields
     
     try {
         const limit = req.query.limit;
@@ -195,7 +252,7 @@ const find = async(req, res = express.response) => {
 
 const update = async (req, res = express.response) => {
     const { tenant } = req
-    const { name } = req.body
+    const { name } = req.fields
 
     try {
         const Publicacion = await getMyModel( tenant )

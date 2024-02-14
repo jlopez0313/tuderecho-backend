@@ -9,7 +9,15 @@ const binaryFiledUrls = [
     'api/videoteca/',
 ]
 const validarBodyParser = (req, res=express.response, next) => {
+    req.body = req.fields;
+    next();
+    /*
+    console.log( 
+        
+        req.fields, // contains non-file fields
+        req.files // contains files
 
+     );
     hasLink = false;
     binaryFiledUrls.forEach( link => {
         if( req.originalUrl.includes(link) ) {
@@ -23,6 +31,8 @@ const validarBodyParser = (req, res=express.response, next) => {
         next();
     }
     else bodyParse(req, res, next);
+
+    */
 }
 
 module.exports = { validarBodyParser }

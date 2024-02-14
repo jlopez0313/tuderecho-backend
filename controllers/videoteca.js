@@ -9,7 +9,7 @@ const create = async (req, res = express.response) => {
     
     try {
         const Videoteca = await getVideotecaModel(tenant);
-        const videoteca = new Videoteca( req.body );
+        const videoteca = new Videoteca( req.fields );
         
         const saved = await videoteca.save();
 
@@ -217,9 +217,9 @@ const update = async (req, res = express.response) => {
     const { tenant } = req;
 
     try {
-        delete req.body.usuarios;
+        delete req.fields.usuarios;
 
-        const body = {...req.body}
+        const body = {...req.fields}
 
         const Videoteca = await getVideotecaModel(tenant);
         const videoteca = await Videoteca.findByIdAndUpdate(req.params.id, {...body}, { new: true });

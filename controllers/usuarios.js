@@ -11,7 +11,7 @@ const { closeConnection } = require('../database/config');
 
 const recovery = async (req, res = express.response) => {
     const {tenant} = req;
-    const {email} = req.body;
+    const {email} = req.fields;
     try {
         const Usuario = await getUsuarioModel(tenant);
         let usuario = await Usuario.findOne({email});
@@ -70,7 +70,7 @@ const recovery = async (req, res = express.response) => {
 
 const passwords = async (req, res = express.response) => {
     const {tenant} = req;
-    const {password, password1, email} = req.body;
+    const {password, password1, email} = req.fields;
     try {
 
         const Usuario = await getUsuarioModel(tenant);
@@ -135,7 +135,7 @@ const passwords = async (req, res = express.response) => {
 
 const withToken = async (req, res = express.response) => {
     const {uid, tenant} = req;
-    const {password1, token} = req.body;
+    const {password1, token} = req.fields;
     try {
         const Usuario = await getUsuarioModel(tenant);
         let usuario = await Usuario.findOne({token});
@@ -196,8 +196,8 @@ const withToken = async (req, res = express.response) => {
 
 const create = async (req, res = express.response) => {
     const { tenant } = req;
-    const { name } = req.body;
-    const usuario = new Usuario( {...req.body, pts: 5} );
+    const { name } = req.fields;
+    const usuario = new Usuario( {...req.fields, pts: 5} );
     try {
         const Usuario = await getUsuarioModel(tenant);
         let existe = await Usuario.findOne({name});
@@ -385,7 +385,7 @@ const update = async (req, res = express.response) => {
         const usuario = await Usuario.findByIdAndUpdate(
             req.params.id, 
             {
-                ...req.body,
+                ...req.fields,
             }
         );
 
@@ -399,7 +399,7 @@ const update = async (req, res = express.response) => {
         const {
             photo,
             oldImage
-        } = req.body.perfil || { photo: null, oldImage: null } ;
+        } = req.fields.perfil || { photo: null, oldImage: null } ;
 
         let imageUrl = oldImage;
 
@@ -413,7 +413,7 @@ const update = async (req, res = express.response) => {
                 user: req.params.id 
             },
             { 
-                ...req.body.perfil,
+                ...req.fields.perfil,
                 photo: imageUrl,
             },
             { new: true }
@@ -422,7 +422,7 @@ const update = async (req, res = express.response) => {
         if ( !perfil) {            
             perfil = new Perfil({ 
                 user: req.params.id,
-                ...req.body.perfil,
+                ...req.fields.perfil,
                 photo: imageUrl
             })
 

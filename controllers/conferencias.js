@@ -9,6 +9,7 @@ const path = require('path');
 const fs = require('fs')
 
 const { createMeeting } = require('../helpers/zoom');
+const { uploadFile } = require('../helpers/files');
 
 const create = async (req, res = express.response) => {
     const {uid, tenant} = req;
@@ -16,49 +17,44 @@ const create = async (req, res = express.response) => {
     const form = formidable({ multiples: true, keepExtensions: true });
     form.uploadDir = path.join(__dirname, "..", "public", "conferencias");
 
-    form.parse(req, async (err, fields, files) => {
-        if (err) {
-            console.log('error creating', err);
-            return;
-        }
+    const {fields, files} = req;
 
-        const pathUrl = `${ process.env.URL }/conferencias/${ files.archivo.newFilename }`
+    const pathUrl = await uploadFile( files.files.path, files.files.type, 'public/conferencias/')
 
-        const meeting = await createMeeting('me', fields.access_token, res);
+    const meeting = await createMeeting('me', fields.access_token, res);
 
-        const Conferencia = await getConferenciaModel( tenant )
-        const conferencia = new Conferencia( {...fields, url: meeting.join_url, archivo: pathUrl } );
+    const Conferencia = await getConferenciaModel( tenant )
+    const conferencia = new Conferencia( {...fields, url: meeting.join_url, archivo: pathUrl } );
 
-        try {
-        
-            const saved = await conferencia.save();
-
-            const Usuario = await getUsuarioModel( tenant )
-            await Usuario.findByIdAndUpdate(
-                uid,
-                {
-                    $push: {"conferencias": saved.id }
-                }
-            );
-
-            closeConnection();
-
-            return res.status(201).json({
-                ok: true,
-                saved
-            })
+    try {
     
-        } catch(error) {
-            return res.status(500).json({
-                ok: false,
-                msg: 'create: Internal Error'
-            })
-        }
+        const saved = await conferencia.save();
+
+        const Usuario = await getUsuarioModel( tenant )
+        await Usuario.findByIdAndUpdate(
+            uid,
+            {
+                $push: {"conferencias": saved.id }
+            }
+        );
+
+        closeConnection();
+
+        return res.status(201).json({
+            ok: true,
+            saved
+        })
+
+    } catch(error) {
+        return res.status(500).json({
+            ok: false,
+            msg: 'create: Internal Error'
+        })
+    }
         
-    });
 
     /*
-    const conferencia = new Conferencia( req.body );
+    const conferencia = new Conferencia( req.fields );
     try {
         
         const saved = await conferencia.save();

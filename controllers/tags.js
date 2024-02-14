@@ -5,10 +5,10 @@ const { closeConnection } = require('../database/config');
 
 const create = async (req, res = express.response) => {
     const { tenant } = req;
-    const { name } = req.body;
+    const { name } = req.fields;
     try {
         const Tag = await getMyModel(tenant);
-        const tag = new Tag( req.body );
+        const tag = new Tag( req.fields );
         
         let existe = await Tag.findOne({name});
         console.log('existe', existe)
@@ -120,7 +120,7 @@ const find = async(req, res = express.response) => {
 
 const update = async (req, res = express.response) => {
     const { tenant } = req;
-    const { name } = req.body;
+    const { name } = req.fields;
 
     try {
         const Tag = await getMyModel(tenant);

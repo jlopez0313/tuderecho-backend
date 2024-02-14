@@ -9,7 +9,9 @@ const { closeConnection } = require('../database/config');
 
 const crearUsuario = async (req, res = express.response) => {
     const {tenant} = req;
-    const {name, email, password, provider} = req.body;
+    const {name, email, password, provider} = req.fields;
+
+    console.log( name, email, password, provider );
     
     try {
         const Usuario = await getMyModel(tenant);
@@ -22,7 +24,7 @@ const crearUsuario = async (req, res = express.response) => {
             })
         }
 
-        usuario = new Usuario({...req.body, pts: 5});
+        usuario = new Usuario({...req.fields, pts: 5});
         const salt = bcrypt.genSaltSync();
         usuario.password = bcrypt.hashSync(password, salt);
         await usuario.save();
@@ -55,7 +57,7 @@ const crearUsuario = async (req, res = express.response) => {
 
 const loginUsuario = async(req, res = express.response) => {
     const {tenant} = req;
-    const {email, password} = req.body;
+    const {email, password} = req.fields;
     try {
         const Perfil = await getPerfilModel(tenant);
 

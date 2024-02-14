@@ -9,6 +9,7 @@ const { closeConnection } = require('../database/config');
 const formidable = require('formidable');
 const path = require('path');
 const fs = require('fs');
+const { uploadFile } = require('../helpers/files');
 
 const create = async (req, res = express.response) => {
     const {uid, tenant} = req;
@@ -56,7 +57,7 @@ const create = async (req, res = express.response) => {
     });
     
     /*
-    const comunidad = new Comunidad( req.body );
+    const comunidad = new Comunidad( req.fields );
     try {
         
         const saved = await comunidad.save();
@@ -262,48 +263,40 @@ const update = async (req, res = express.response) => {
     const { tenant } = req
     
     const form = formidable({ multiples: true, keepExtensions: true });
-    
     form.uploadDir = path.join(__dirname, "..", "public", "comunidades");
 
-    form.parse(req, async (err, fields, files) => {
-        if (err) {
-            console.log(err);
-            return;
-        }
+    const {fields, files} = req;
 
-        let pathUrl = ''
-        if ( files.archivo ) {
-            console.log(files.archivo);
-            pathUrl = `${ process.env.URL }/comunidades/${ files.archivo.newFilename }`
-        }
+    let pathUrl = ''
+    if ( files.archivo ) {
+        pathUrl = await uploadFile( files.files.path, files.files.type, 'public/comunidades/')
+    }
 
-        try {
-        
-            delete fields.usuarios;
-
-            const body = {...fields }
-            
-            if ( pathUrl )
-                body.archivo = pathUrl            
-            
-            const Comunidad = await getComunidadModel(tenant)
-            const comunidad = await Comunidad.findByIdAndUpdate( fields.id, body);
-
-            closeConnection();
-
-            return res.status(201).json({
-                ok: true,
-                comunidad
-            })
+    try {
     
-        } catch(error) {
-            return res.status(500).json({
-                ok: false,
-                msg: 'create: Internal Error'
-            })
-        }
+        delete fields.usuarios;
+
+        const body = {...fields }
         
-    });
+        if ( pathUrl )
+            body.archivo = pathUrl            
+        
+        const Comunidad = await getComunidadModel(tenant)
+        const comunidad = await Comunidad.findByIdAndUpdate( fields.id, body);
+
+        closeConnection();
+
+        return res.status(201).json({
+            ok: true,
+            comunidad
+        })
+
+    } catch(error) {
+        return res.status(500).json({
+            ok: false,
+            msg: 'create: Internal Error'
+        })
+    }
 }
 
 const remove = async(req, res = express.response) => {

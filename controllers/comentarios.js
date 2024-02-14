@@ -8,13 +8,13 @@ const { closeConnection } = require('../database/config');
 
 const create = async (req, res = express.response) => {
     const { tenant } = req;
-    const { parent, publicacionID } = req.body;
+    const { parent, publicacionID } = req.fields;
     
     try {
         const Usuario = await getUsuarioModel(tenant);
 
         const Comentario = await getComentarioModel(tenant);
-        const comentario = new Comentario( req.body );
+        const comentario = new Comentario( req.fields );
 
         const comment = await comentario.save();
         if ( parent ) {
@@ -112,7 +112,7 @@ const find = async(req, res = express.response) => {
 
 const update = async (req, res = express.response) => {
     const { tenant } = req;
-    const { name } = req.body;
+    const { name } = req.fields;
 
     try {
         const Comentario = await getComentarioModel(tenant);
@@ -150,7 +150,7 @@ const update = async (req, res = express.response) => {
 
 const remove = async(req, res = express.response) => {
     const { tenant} = req;
-    const { publicacionID} = req.body;
+    const { publicacionID} = req.fields;
 
     try {
         const Comentario = await getComentarioModel(tenant);

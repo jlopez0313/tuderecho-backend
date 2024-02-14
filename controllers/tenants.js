@@ -10,11 +10,11 @@ const bcrypt = require('bcryptjs');
 
 
 const create = async (req, res = express.response) => {
-    const { name } = req.body;
+    const { name } = req.fields;
     
     try {
         const TenantModel = await getTenantModel();
-        const tenant = new TenantModel( req.body );
+        const tenant = new TenantModel( req.fields );
         
         let existe = await TenantModel.findOne({name});
         console.log('existe', existe)
@@ -173,7 +173,7 @@ const find = async(req, res = express.response) => {
 }
 
 const update = async (req, res = express.response) => {
-    const { name } = req.body;
+    const { name } = req.fields;
 
     try {
         const TenantModel = await getTenantModel();

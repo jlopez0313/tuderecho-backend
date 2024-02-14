@@ -40,7 +40,7 @@ const update = async (req, res = express.response) => {
             heroe,
             logo,
             fondo
-        } = req.body || {
+        } = req.fields || {
                 title: settings?.title, 
                 heroe: settings?.heroe,
                 logo: settings?.logo,
