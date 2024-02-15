@@ -90,7 +90,6 @@ class Server {
 
     addMiddlewares() {
         this.app.use( cors() );
-        console.log('before formidble');
         this.app.use( formidableMiddleware({ multiples: true }) )
         this.app.use( express.static('public') )
         this.app.use( express.urlencoded({ extended: false }) );
