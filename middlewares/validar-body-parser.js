@@ -9,7 +9,6 @@ const binaryFiledUrls = [
     'api/videoteca/',
 ]
 const validarBodyParser = (req, res=express.response, next) => {
-    console.log('validarBodyParser');
     req.body = req.fields;
     next();
     /*
