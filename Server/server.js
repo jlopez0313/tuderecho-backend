@@ -2,8 +2,8 @@ const express = require('express');
 require('dotenv').config();
 const { dbConnection } = require('../database/config');
 const cors = require('cors');
-const formidableMiddleware = require('express-formidable');
-const bodyParser = require('body-parser');
+// const formidableMiddleware = require('express-formidable');
+// const bodyParser = require('body-parser');
 const { create, read } = require('../controllers/chat');
 
 class Server {
@@ -90,7 +90,7 @@ class Server {
 
     addMiddlewares() {
         this.app.use( cors() );
-        this.app.use( formidableMiddleware({ multiples: true }) )
+        // this.app.use( formidableMiddleware({ multiples: true }) )
         this.app.use( express.static('public') )
         this.app.use( express.urlencoded({ extended: false }) );
         // this.app.use( bodyParser.json({ limit: '250mb' }) );
