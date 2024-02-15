@@ -14,11 +14,10 @@ const { uploadFile } = require('../helpers/files');
 const create = async (req, res = express.response) => {
     const {uid, tenant} = req;
 
-    const form = formidable({ multiples: true, keepExtensions: true });
-    form.uploadDir = path.join(__dirname, "..", "public", "conferencias");
+    // const form = formidable({ multiples: true, keepExtensions: true });
+    // form.uploadDir = path.join(__dirname, "..", "public", "conferencias");
 
     const {fields, files} = req;
-
     const pathUrl = await uploadFile( files.files.path, files.files.type, 'public/conferencias/')
 
     const meeting = await createMeeting('me', fields.access_token, res);
@@ -275,52 +274,43 @@ const find = async(req, res = express.response) => {
 
 const update = async (req, res = express.response) => {
     const { tenant } = req
+    const {fields, files} = req;
 
-    const form = formidable({ multiples: true, keepExtensions: true });
+    // const form = formidable({ multiples: true, keepExtensions: true });
+    // form.uploadDir = path.join(__dirname, "..", "public", "conferencias");
     
-    form.uploadDir = path.join(__dirname, "..", "public", "conferencias");
+    let pathUrl = ''
+    if ( files.archivo ) {
+        pathUrl = await uploadFile( files.files.path, files.files.type, 'public/conferencias/')
+    }
 
-    form.parse(req, async (err, fields, files) => {
-        if (err) {
-            console.log(err);
-            return;
-        }
-
-        let pathUrl = ''
-        if ( files.archivo ) {
-            console.log(files.archivo);
-            pathUrl = `${ process.env.URL }/conferencias/${ files.archivo.newFilename }`
-        }
-
-        try {
-        
-            delete fields.usuarios;
-            
-            const body = {...fields }
-            
-            if ( pathUrl )
-                body.archivo = pathUrl
-
-
-            const Conferencia = await getConferenciaModel( tenant )
-            const conferencia = await Conferencia.findByIdAndUpdate( fields.id, body);
-
-            closeConnection();
-
-            return res.status(201).json({
-                ok: true,
-                conferencia
-            })
+    try {
     
-        } catch(error) {
-            console.log( error );
-            return res.status(500).json({
-                ok: false,
-                msg: 'update: Internal Error'
-            })
-        }
+        delete fields.usuarios;
         
-    });
+        const body = {...fields }
+        
+        if ( pathUrl )
+            body.archivo = pathUrl
+
+
+        const Conferencia = await getConferenciaModel( tenant )
+        const conferencia = await Conferencia.findByIdAndUpdate( fields.id, body);
+
+        closeConnection();
+
+        return res.status(201).json({
+            ok: true,
+            conferencia
+        })
+
+    } catch(error) {
+        console.log( error );
+        return res.status(500).json({
+            ok: false,
+            msg: 'update: Internal Error'
+        })
+    }    
 }
 
 const remove = async(req, res = express.response) => {

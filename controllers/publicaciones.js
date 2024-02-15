@@ -17,8 +17,8 @@ const create = async (req, res = express.response) => {
 
     const { tenant } = req;
 
-    const form = formidable({ multiples: true, keepExtensions: true });
-    form.uploadDir = path.join(__dirname, "..", "public", "publicaciones");
+    // const form = formidable({ multiples: true, keepExtensions: true });
+    // form.uploadDir = path.join(__dirname, "..", "public", "publicaciones");
 
     const {fields, files} = req;
     
@@ -74,7 +74,7 @@ const create = async (req, res = express.response) => {
         })
     }
 
-
+/*
 
     form.parse(req, async (err, fields, files) => {
         if (err) {
@@ -135,7 +135,7 @@ const create = async (req, res = express.response) => {
             })
         }
     });
-
+*/
 }
 
 const list = async(req, res = express.response) => {

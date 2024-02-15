@@ -14,48 +14,40 @@ const { uploadFile } = require('../helpers/files');
 const create = async (req, res = express.response) => {
     const {uid, tenant} = req;
 
-    const form = formidable({ multiples: true, keepExtensions: true });
-    form.uploadDir = path.join(__dirname, "..", "public", "comunidades");
+    // const form = formidable({ multiples: true, keepExtensions: true });
+    // form.uploadDir = path.join(__dirname, "..", "public", "comunidades");
 
-    form.parse(req, async (err, fields, files) => {
-        if (err) {
-            console.log(err);
-            return;
-        }
+    const pathUrl = await uploadFile( files.files.path, files.files.type, 'public/comunidades/')
 
-        const pathUrl = `${ process.env.URL }/comunidades/${ files.archivo.newFilename }`
+    const Comunidad = await getComunidadModel(tenant)
+    const comunidad = new Comunidad( {...fields, archivo: pathUrl } );
 
-        const Comunidad = await getComunidadModel(tenant)
-        const comunidad = new Comunidad( {...fields, archivo: pathUrl } );
-
-        try {
-        
-            const saved = await comunidad.save();
-
-            const Usuario = await getUsuarioModel( tenant )
-            await Usuario.findByIdAndUpdate(
-                uid,
-                {
-                    $push: {"comunidades": saved.id }
-                }
-            );
-
-            closeConnection();
-
-            return res.status(201).json({
-                ok: true,
-                saved
-            })
+    try {
     
-        } catch(error) {
-            return res.status(500).json({
-                ok: false,
-                msg: 'create: Internal Error'
-            })
-        }
-        
-    });
-    
+        const saved = await comunidad.save();
+
+        const Usuario = await getUsuarioModel( tenant )
+        await Usuario.findByIdAndUpdate(
+            uid,
+            {
+                $push: {"comunidades": saved.id }
+            }
+        );
+
+        closeConnection();
+
+        return res.status(201).json({
+            ok: true,
+            saved
+        })
+
+    } catch(error) {
+        return res.status(500).json({
+            ok: false,
+            msg: 'create: Internal Error'
+        })
+    }
+     
     /*
     const comunidad = new Comunidad( req.fields );
     try {
@@ -262,8 +254,8 @@ const find = async(req, res = express.response) => {
 const update = async (req, res = express.response) => {
     const { tenant } = req
     
-    const form = formidable({ multiples: true, keepExtensions: true });
-    form.uploadDir = path.join(__dirname, "..", "public", "comunidades");
+    // const form = formidable({ multiples: true, keepExtensions: true });
+    // form.uploadDir = path.join(__dirname, "..", "public", "comunidades");
 
     const {fields, files} = req;
 
