@@ -1,13 +1,13 @@
 const express = require('express');
 const { sendEmail } = require('../helpers/mailer');
 const { generarJWT } = require('../helpers/jwt');
-const base64Img = require('base64-img');
 const bcrypt = require('bcryptjs');
 const fs = require('fs');
 const {getMyModel: getUsuarioModel} = require('../models/Usuario');
 const {getMyModel: getPerfilModel} = require('../models/Perfil');
 const {getMyModel: getEspecialidadModel} = require('../models/Especialidad');
 const { closeConnection } = require('../database/config');
+const { uploadBase64, removeFile } = require('../helpers/files');
 
 const recovery = async (req, res = express.response) => {
     const {tenant} = req;
@@ -480,22 +480,9 @@ const remove = async(req, res = express.response) => {
 
 const uploadFile = ( strImage, oldImage ) => {  
     return new Promise( async (resolve, reject) => {
-        const folderPath = './public';
         try {            
             if (oldImage)  {
-                const erasingImage = oldImage?.split('/').pop()            
-                const existe = await fs.existsSync(`${folderPath}/${erasingImage}`)
-                if ( existe ) {
-                    fs.unlink( `${folderPath}/${erasingImage}`, (error) => {
-                        if ( error ) {
-                            console.log( 'Error eliminando', `${folderPath}/${erasingImage}` )
-                            throw new Error('Error eliminando');
-                        }
-                    });
-                } else {
-                    console.log( 'Imagen no existe', `${folderPath}/${erasingImage}` )
-                    throw new Error('No existe la imagen');
-                }
+                await removeFile( oldImage );
             }
         } catch( err ) {
             console.log( 'No existe la imagen', oldImage, err );
@@ -506,29 +493,6 @@ const uploadFile = ( strImage, oldImage ) => {
                 resolve(strImage)
             }
         }
-    })
-
-}
-
-const uploadBase64 = (strImage, resolve, reject) => {
-    base64Img.img(strImage, './public', Date.now(), function(err, path) {
-        if (err ){
-            console.log('error', error)
-            reject( err )
-        }
-        const fileName = path.split('/').pop().split('\\').pop();
-        resolve(`${process.env.URL}/${fileName}`);
-    })
-}
-
-const uploadfromUrl = (photoUrl, resolve, reject) => {
-    base64Img.requestBase64(photoUrl, function(error, res, body) {
-        if ( error ) {
-            console.log('error', error)
-            reject( err )
-        }
-
-        resolve(body);
     })
 }
 

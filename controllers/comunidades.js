@@ -9,7 +9,7 @@ const { closeConnection } = require('../database/config');
 const formidable = require('formidable');
 const path = require('path');
 const fs = require('fs');
-const { uploadFile } = require('../helpers/files');
+const { uploadFile, removeFile } = require('../helpers/files');
 
 const create = async (req, res = express.response) => {
     const {uid, tenant} = req;
@@ -306,16 +306,7 @@ const remove = async(req, res = express.response) => {
             })    
         }
 
-        const existe = await fs.existsSync(comunidad.archivo)
-        if ( existe ) {
-            fs.unlink( comunidad.archivo, (error) => {
-                if ( error ) {
-                    console.log( 'Error eliminando', comunidad.archivo )
-                }
-            });
-        } else {
-            console.log( 'Imagen no existe', comunidad.archivo )
-        }
+        await removeFile( comunidad.archivo )
 
         const Usuario = await getUsuarioModel( tenant )
         await Usuario.findByIdAndUpdate(

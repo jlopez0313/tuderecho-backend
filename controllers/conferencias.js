@@ -9,7 +9,7 @@ const path = require('path');
 const fs = require('fs')
 
 const { createMeeting } = require('../helpers/zoom');
-const { uploadFile } = require('../helpers/files');
+const { uploadFile, removeFile } = require('../helpers/files');
 
 const create = async (req, res = express.response) => {
     const {uid, tenant} = req;
@@ -327,16 +327,7 @@ const remove = async(req, res = express.response) => {
             })    
         }
 
-        const existe = await fs.existsSync(conferencia.archivo)
-        if ( existe ) {
-            fs.unlink( conferencia.archivo, (error) => {
-                if ( error ) {
-                    console.log( 'Error eliminando', conferencia.archivo )
-                }
-            });
-        } else {
-            console.log( 'Imagen no existe', conferencia.archivo )
-        }
+        await removeFile( conferencia.archivo )
 
         const Usuario = await getUsuarioModel( tenant )
         await Usuario.findByIdAndUpdate(

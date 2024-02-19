@@ -11,7 +11,7 @@ const { closeConnection } = require('../database/config');
 const formidable = require('formidable');
 const path = require('path');
 const fs = require('fs');
-const { uploadFile } = require('../helpers/files');
+const { uploadFile, removeFile } = require('../helpers/files');
 
 const create = async (req, res = express.response) => {
 
@@ -292,17 +292,8 @@ const remove = async(req, res = express.response) => {
             })    
         }
 
-        publicacion.medias.forEach( async(media) => {
-            const existe = await fs.existsSync(media)
-            if ( existe ) {
-                fs.unlink( media, (error) => {
-                    if ( error ) {
-                        console.log( 'Error eliminando', media )
-                    }
-                });
-            } else {
-                console.log( 'Imagen no existe', media )
-            }
+        publicacion.medias.forEach( async (media) => {
+            await removeFile( media )
         })
 
         closeConnection();
