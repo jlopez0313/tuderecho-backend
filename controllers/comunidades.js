@@ -17,7 +17,7 @@ const create = async (req, res = express.response) => {
     // const form = formidable({ multiples: true, keepExtensions: true });
     // form.uploadDir = path.join(__dirname, "..", "public", "comunidades");
     const {fields, files} = req;
-    const pathUrl = await uploadFile( files.files.path, files.files.type, 'public/comunidades/')
+    const pathUrl = await uploadFile( files.archivo.path, files.archivo.type, 'public/comunidades/')
 
     const Comunidad = await getComunidadModel(tenant)
     const comunidad = new Comunidad( {...fields, archivo: pathUrl } );

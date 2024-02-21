@@ -18,7 +18,7 @@ const create = async (req, res = express.response) => {
     // form.uploadDir = path.join(__dirname, "..", "public", "conferencias");
 
     const {fields, files} = req;
-    const pathUrl = await uploadFile( files.files.path, files.files.type, 'public/conferencias/')
+    const pathUrl = await uploadFile( files.archivo.path, files.archivo.type, 'public/conferencias/')
 
     const meeting = await createMeeting('me', fields.access_token, res);
 
