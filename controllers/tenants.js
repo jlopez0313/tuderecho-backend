@@ -10,7 +10,7 @@ const bcrypt = require('bcryptjs');
 
 
 const create = async (req, res = express.response) => {
-    const { name } = req.fields;
+    const { name, domain } = req.fields;
     
     try {
         const TenantModel = await getTenantModel();
