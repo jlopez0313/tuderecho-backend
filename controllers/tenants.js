@@ -31,6 +31,7 @@ const create = async (req, res = express.response) => {
         const rq = {
             tenant: saved,
             body: {
+                pts: 5,
                 rol: 'Admin',
                 name: 'Admin Admin',
                 email: 'admin@correo.com',
