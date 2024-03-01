@@ -27,7 +27,7 @@ const recovery = async (req, res = express.response) => {
         const token = bcrypt.hashSync(new Date().toString(), salt);
         await usuario.update({token});
 
-        const url = `${ process.env.FRONTEND }/${ tenant }/claves?temporary_token=${ token }`;
+        const url = `${ process.env.FRONTEND }/claves?temporary_token=${ token }`;
 
         const html = `
         <html>
