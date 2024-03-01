@@ -8,11 +8,22 @@ const {getMyModel: getPerfilModel} = require('../models/Perfil');
 const {getMyModel: getEspecialidadModel} = require('../models/Especialidad');
 const { closeConnection } = require('../database/config');
 const { uploadBase64, removeFile } = require('../helpers/files');
+const { getTenantModel } = require('../models/Tenant');
 
 const recovery = async (req, res = express.response) => {
     const {tenant} = req;
     const {email} = req.fields;
     try {
+        const TenantModel = await getTenantModel();
+        const existe = await TenantModel.findOne({name: tenant});
+
+        if ( !existe ) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'El Tenant no encuentra registrado'
+            })
+        }
+
         const Usuario = await getUsuarioModel(tenant);
         let usuario = await Usuario.findOne({email});
 
@@ -27,7 +38,7 @@ const recovery = async (req, res = express.response) => {
         const token = bcrypt.hashSync(new Date().toString(), salt);
         await usuario.update({token});
 
-        const url = `${ process.env.FRONTEND }/claves?temporary_token=${ token }`;
+        const url = `https://${ existe.domain }/claves?temporary_token=${ token }`;
 
         const html = `
         <html>
