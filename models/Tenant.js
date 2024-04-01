@@ -1,6 +1,6 @@
 const { dbConnection } = require('../database/config');
 const { Schema, model } = require('mongoose');
-const url = process.env.DB_CONNECTION + 'admin_db';
+const url = process.env.DB_CONNECTION;
 
 let db ;
 
