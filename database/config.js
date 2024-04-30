@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 
-let db ;
-
 const dbConnection = async( url ) => {
     try {
         
@@ -44,6 +42,8 @@ const closeConnection = async () => {
     } 
 };
 
+
+let db ;
 const getTenantModel = async (tenant) => {
     const dbName = `tenant-${tenant}`;
     db = db ? db : await dbConnection( process.env.DB_CONNECTION)

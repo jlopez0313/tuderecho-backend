@@ -24,7 +24,7 @@ const crearUsuario = async (req, res = express.response) => {
             })
         }
 
-        usuario = new Usuario({...req.fields, pts: 5});
+        usuario = new Usuario({...req.fields, pts: 5, plan: 1});
         const salt = bcrypt.genSaltSync();
         usuario.password = bcrypt.hashSync(password, salt);
         await usuario.save();

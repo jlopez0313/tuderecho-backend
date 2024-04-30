@@ -392,12 +392,15 @@ const update = async (req, res = express.response) => {
     const {tenant} = req
 
     try {
+
+        console.log( req.fields );
         const Usuario = await getUsuarioModel(tenant);
         const usuario = await Usuario.findByIdAndUpdate(
             req.params.id, 
             {
                 ...req.fields,
-            }
+            },
+            { new: true }
         );
 
         if ( !usuario) {

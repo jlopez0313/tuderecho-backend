@@ -11,6 +11,10 @@ const UsuarioSchema = Schema({
         type: String,
         required: true
     },
+    plan: {
+        type: Number,
+        required: true
+    },
     pts: {
         type: Number,
         required: true

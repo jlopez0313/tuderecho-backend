@@ -60,7 +60,6 @@ router.post(
 router.put(
     '/:id',
     [
-        check('name', 'El nombre es obligatorio').not().isEmpty(),
         validarCampos
     ],
     update
