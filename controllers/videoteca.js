@@ -8,6 +8,7 @@ const create = async (req, res = express.response) => {
     const {uid, tenant} = req;
     
     try {
+        
         const Videoteca = await getVideotecaModel(tenant);
         const videoteca = new Videoteca( req.fields );
         
@@ -15,10 +16,12 @@ const create = async (req, res = express.response) => {
 
         const Usuario = await getUsuarioModel(tenant);
         await Usuario.findByIdAndUpdate(
-            uid,
+            {_id : uid},
             {
-                $push: {"videoteca": saved.id }
-            }
+                $push: {"videoteca": saved.id },
+                $inc:  {"storage": videoteca.total_bytes },
+            },
+            { new: true }
         );
 
         closeConnection();

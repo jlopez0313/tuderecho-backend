@@ -6,6 +6,7 @@ const {getMyModel: getPerfilModel} = require('../models/Perfil');
 const { generarJWT } = require('../helpers/jwt');
 const { sendEmail } = require('../helpers/mailer');
 const { closeConnection } = require('../database/config');
+const { GIGAS, DAYS_LEFT } = require('../constants/constants');
 
 const crearUsuario = async (req, res = express.response) => {
     const {tenant} = req;
@@ -24,7 +25,18 @@ const crearUsuario = async (req, res = express.response) => {
             })
         }
 
-        usuario = new Usuario({...req.fields, pts: 5, plan: 1});
+        const today = new Date();
+        today.setDate(today.getDate() + DAYS_LEFT);
+        
+        usuario = new Usuario({
+            ...req.fields,
+            pts: 5,
+            plan: 1,
+            storage: 0,
+            total_storage: GIGAS,
+            suscription: 'F',
+            days_left: today
+        });
         const salt = bcrypt.genSaltSync();
         usuario.password = bcrypt.hashSync(password, salt);
         await usuario.save();

@@ -20,6 +20,10 @@ const VideotecaSchema = Schema({
         type: String,
         required: true
     },
+    total_bytes: {
+        type: Schema.Types.Decimal128,
+        required: true
+    },
     gratis: {
         type: String,
         required: true

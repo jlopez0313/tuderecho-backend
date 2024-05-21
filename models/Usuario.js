@@ -11,8 +11,24 @@ const UsuarioSchema = Schema({
         type: String,
         required: true
     },
+    suscription: {
+        type: String,
+        required: true
+    },
+    days_left: {
+        type: Date,
+        required: true
+    },
     plan: {
         type: Number,
+        required: true
+    },
+    storage: {
+        type: Schema.Types.Decimal128,
+        required: true
+    },
+    total_storage: {
+        type: Schema.Types.Decimal128,
         required: true
     },
     pts: {
