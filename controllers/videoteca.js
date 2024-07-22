@@ -194,6 +194,7 @@ const find = async(req, res = express.response) => {
     try {
         const Videoteca = await getVideotecaModel(tenant);
         const videoteca = await Videoteca.findById(req.params.id);
+        
         if ( !videoteca) {
             return res.status(404).json({
                 ok: false,                
@@ -226,6 +227,7 @@ const update = async (req, res = express.response) => {
 
         const Videoteca = await getVideotecaModel(tenant);
         const videoteca = await Videoteca.findByIdAndUpdate(req.params.id, {...body}, { new: true });
+
         if ( !videoteca) {
             return res.status(404).json({
                 ok: false,
@@ -254,6 +256,7 @@ const remove = async(req, res = express.response) => {
     try {
         const Videoteca = await getVideotecaModel(tenant);
         const videoteca = await Videoteca.findByIdAndDelete(req.params.id);
+
         if ( !videoteca) {
             return res.status(404).json({
                 ok: false,
@@ -295,6 +298,7 @@ const subscribe = async (req, res = express.response) => {
             })    
         }
 
+        const Usuario = await getUsuarioModel(tenant);
         await Usuario.findByIdAndUpdate(
             uid,
             {
