@@ -310,6 +310,7 @@ const subscribe = async (req, res = express.response) => {
         })
 
     } catch(error) {
+        console.log( error );
         res.status(500).json({
             ok: false,
             msg: 'update: Internal Error'
