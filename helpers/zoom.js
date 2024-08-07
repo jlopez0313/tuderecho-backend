@@ -11,7 +11,8 @@ const createMeeting = async (userId, acces_token, payload) => {
             agenda: payload.objetivo,
             type : 2,
             start_time: payload.fecha,
-            duration: 60
+            duration: 60,
+            schedule_for: 'jlopez0313@hotmail.com'
         },
         headers: {
             Authorization: `Bearer ${acces_token}`
