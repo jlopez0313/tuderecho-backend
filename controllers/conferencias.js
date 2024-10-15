@@ -21,6 +21,7 @@ const create = async (req, res = express.response) => {
     const pathUrl = await uploadFile( files.archivo.path, files.archivo.type, 'public/conferencias/')
 
     const meeting = await createMeeting('me', fields.access_token, res);
+    console.log('meeting', meeting);
 
     const Conferencia = await getConferenciaModel( tenant )
     const conferencia = new Conferencia( {...fields, url: meeting.join_url, archivo: pathUrl } );

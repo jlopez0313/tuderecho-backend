@@ -12,7 +12,7 @@ const createMeeting = async (userId, acces_token, payload) => {
             type : 2,
             start_time: payload.fecha,
             duration: 60,
-            schedule_for: 'jlopez0313@hotmail.com'
+            // schedule_for: 'jlopez0313@hotmail.com'
         },
         headers: {
             Authorization: `Bearer ${acces_token}`
@@ -20,7 +20,7 @@ const createMeeting = async (userId, acces_token, payload) => {
     }).then( response => {
         return response
     }).catch( error => {
-        console.log( error.data );
+        console.log( 'zoom error', error );
         return error.data || { data: 'something went wrong'}
     });
 
