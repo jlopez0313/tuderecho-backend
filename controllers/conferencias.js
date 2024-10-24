@@ -132,6 +132,9 @@ const myList = async(req, res = express.response) => {
 
     try {
 
+        const limitDate = new Date();
+        limitDate.setHours(-1);
+
         const limit = req.query.limit;
         const page = req.query.page - 1
 
@@ -158,7 +161,7 @@ const myList = async(req, res = express.response) => {
                             _id: { $in: user.conferencias || [] },
                         },
                         {
-                            fecha: { $gt: new Date() }
+                            fecha: { $gt: limitDate }
                         }
                     ]
                 }
@@ -190,6 +193,9 @@ const list = async(req, res = express.response) => {
     const filter = req.params?.search || '';
 
     try {
+        const limitDate = new Date();
+        limitDate.setHours(-1);
+
         const limit = req.query.limit;
         const page = req.query.page - 1
 
@@ -215,7 +221,7 @@ const list = async(req, res = express.response) => {
                             _id: { $nin: user.conferencias || [] },
                         },
                         {
-                            fecha: { $gt: new Date() }
+                            fecha: { $gt: limitDate }
                         }
                     ]
                 }

@@ -90,7 +90,7 @@ const loginUsuario = async(req, res = express.response) => {
 
         const passwowrdValid = bcrypt.compareSync(password, usuario.password);
         if ( !passwowrdValid ) {
-            return res.status(400).json({
+            return res.status(501).json({
                 ok: false,
                 msg: 'El password no es valido'
             })
