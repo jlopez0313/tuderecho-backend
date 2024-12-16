@@ -1,197 +1,181 @@
-const express = require('express');
-const { generarJWT } = require('../helpers/jwt');
-const {getMyModel} = require('../models/Especialidad');
-const { closeConnection } = require('../database/config');
+const express = require("express");
+const { getMyModel } = require("../models/Especialidad");
 
 const create = async (req, res = express.response) => {
-    const { tenant } = req;
-    const { name } = req.fields;
-    try {
-        const Especialidad = await getMyModel(tenant);
-        const especialidad = new Especialidad( req.fields );
-        
-        let existe = await Especialidad.findOne({name});
-        console.log('existe', existe)
+  const { tenant } = req;
+  const { name } = req.fields;
+  try {
+    const Especialidad = await getMyModel(tenant);
+    const especialidad = new Especialidad(req.fields);
 
-        if ( existe ) {
-            return res.status(400).json({
-                ok: false,
-                msg: 'La Especialidad ya se encuentra registrada'
-            })
-        }
+    let existe = await Especialidad.findOne({ where: { name } });
+    console.log("existe", existe);
 
-        const saved = await especialidad.save();
+    if (existe) {
+      return res.status(400).json({
+        ok: false,
+        msg: "La Especialidad ya se encuentra registrada",
+      });
+    }
 
-        closeConnection();
+    const saved = await especialidad.save();
 
-        return res.status(201).json({
-            ok: true,
-            saved
-        })
+    return res.status(201).json({
+      ok: true,
+      saved,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      ok: false,
+      msg: "create: Internal Error",
+    });
+  }
+};
 
-    } catch(error) {
-        return res.status(500).json({
-            ok: false,
-            msg: 'create: Internal Error'
-        })
-    }    
-}
+const paginate = async (req, res = express.response) => {
+  const { tenant } = req;
+  try {
+    const limit = req.query.limit;
+    const page = req.query.page - 1;
 
-const paginate = async(req, res = express.response) => {
-    const { tenant } = req;
-    try {
-        const limit = req.query.limit;
-        const page = req.query.page - 1
+    const Especialidad = await getMyModel(tenant);
+    const especialidades = await Especialidad.findAll({
+      order: [["name", "asc"]],
+      offset: limit * page,
+      limit: +limit,
+    });
 
-        const Especialidad = await getMyModel(tenant);
-        const especialidades = await Especialidad.find()
-            .sort( { name: 1 } )
-            .skip(limit * page)
-            .limit(limit);
+    const total = await Especialidad.count();
 
-        const total = await Especialidad.find().count();
+    return res.status(200).json({
+      ok: true,
+      especialidades,
+      total,
+    });
+  } catch (error) {
+    res.status(500).json({
+      ok: false,
+      msg: "list: Internal Error",
+    });
+  }
+};
 
-        closeConnection();
+const list = async (req, res = express.response) => {
+  const { tenant } = req;
 
-        return res.status(200).json({
-            ok: true,
-            especialidades,
-            total
-        })
+  try {
+    const Especialidad = await getMyModel(tenant);
+    const especialidades = await Especialidad.findAll({
+      order: [["name", "ASC"]],
+    });
 
-    } catch(error) {
-        res.status(500).json({
-            ok: false,
-            msg: 'list: Internal Error'
-        })
-    }   
-}
+    return res.status(200).json({
+      ok: true,
+      especialidades,
+    });
+  } catch (error) {
+    res.status(500).json({
+      ok: false,
+      msg: "list: Internal Error",
+    });
+  }
+};
 
-const list = async(req, res = express.response) => {
-    const { tenant } = req;
-    
-    try {
+const find = async (req, res = express.response) => {
+  const { tenant } = req;
 
-        const Especialidad = await getMyModel(tenant);
-        const especialidades = await Especialidad.find().sort( { name: 1 } );
-        
-        closeConnection();
+  try {
+    const Especialidad = await getMyModel(tenant);
+    const especialidad = await Especialidad.findByPk(req.params.id);
 
-        return res.status(200).json({
-            ok: true,
-            especialidades
-        })
+    if (!especialidad) {
+      return res.status(404).json({
+        ok: false,
+        msg: "La Especialidad no existe",
+      });
+    }
 
-    } catch(error) {
-        res.status(500).json({
-            ok: false,
-            msg: 'list: Internal Error'
-        })
-    }   
-}
-
-const find = async(req, res = express.response) => {
-    const { tenant } = req;
-    
-    try {
-        
-        const Especialidad = await getMyModel(tenant);
-        const especialidad = await Especialidad.findById(req.params.id);
-        
-        if ( !especialidad) {
-            return res.status(404).json({
-                ok: false,
-                msg: 'La Especialidad no existe'
-            })    
-        }
-
-        closeConnection();
-
-        return res.status(200).json({
-            ok: true,
-            especialidad
-        })
-
-    } catch(error) {
-        res.status(500).json({
-            ok: false,
-            msg: 'find: Internal Error'
-        })
-    }   
-}
+    return res.status(200).json({
+      ok: true,
+      especialidad,
+    });
+  } catch (error) {
+    res.status(500).json({
+      ok: false,
+      msg: "find: Internal Error",
+    });
+  }
+};
 
 const update = async (req, res = express.response) => {
-    const { tenant } = req;
-    const { name } = req.fields;
+  const { tenant } = req;
+  const { name } = req.fields;
 
-    try {
-        
-        const Especialidad = await getMyModel(tenant);
-        const especialidad = await Especialidad.findByIdAndUpdate(
-            req.params.id,
-            {
-                name,
-            },
-            { 
-                new: true
-            }
-        );
+  try {
+    const Especialidad = await getMyModel(tenant);
+    const [affectedCount] = await Especialidad.update(
+      {
+        name,
+      },
+      {
+        where: { id: req.params.id },
+      }
+    );
 
-        if ( !especialidad) {
-            return res.status(404).json({
-                ok: false,
-                msg: 'La Especialidad no existe'
-            })    
-        }
+    if (!affectedCount) {
+      return res.status(404).json({
+        ok: false,
+        msg: "La Especialidad no existe",
+      });
+    }
 
-        closeConnection();
+    const especialidad = await Especialidad.findByPk( req.params.id );
 
-        return res.status(200).json({
-            ok: true,
-            especialidad
-        })
+    return res.status(200).json({
+      ok: true,
+      especialidad,
+    });
+  } catch (error) {
+    res.status(500).json({
+      ok: false,
+      msg: "update: Internal Error",
+    });
+  }
+};
 
-    } catch(error) {
-        res.status(500).json({
-            ok: false,
-            msg: 'update: Internal Error'
-        })
-    } 
-}
+const remove = async (req, res = express.response) => {
+  const { tenant } = req;
 
-const remove = async(req, res = express.response) => {
-    const { tenant } = req;
-    
-    try {
-        
-        const Especialidad = await getMyModel(tenant);
-        const especialidad = await Especialidad.findByIdAndDelete(req.params.id);
-        if ( !especialidad) {
-            return res.status(404).json({
-                ok: false,
-            })    
-        }
+  try {
+    const Especialidad = await getMyModel(tenant);
 
-        closeConnection();
+    const especialidad = await Especialidad.findByPk( req.params.id );
 
-        return res.status(200).json({
-            ok: true,
-            especialidad
-        })
+    if (!especialidad) {
+      return res.status(404).json({
+        ok: false,
+      });
+    }
 
-    } catch(error) {
-        res.status(500).json({
-            ok: false,
-            msg: 'remove: Internal Error'
-        })
-    } 
-}
+    await especialidad.destroy();
+
+    return res.status(200).json({
+      ok: true,
+      especialidad,
+    });
+  } catch (error) {
+    res.status(500).json({
+      ok: false,
+      msg: "remove: Internal Error",
+    });
+  }
+};
 
 module.exports = {
-    create,
-    update,
-    find,
-    list,
-    paginate,
-    remove
-}
+  create,
+  update,
+  find,
+  list,
+  paginate,
+  remove,
+};

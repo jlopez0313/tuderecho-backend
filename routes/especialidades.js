@@ -5,6 +5,7 @@ const  { check } = require('express-validator');
 const { list, paginate, find, create, update, remove } = require('../controllers/especialidades');
 const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-token');
+const { AsociacionModelos } = require("../middlewares/Asociaciones");
 
 const { validarBodyParser } = require('../middlewares/validar-body-parser');
 router.use( validarBodyParser )
@@ -13,6 +14,7 @@ const { validarTenant } = require('../middlewares/validar-tenant');
 router.use( validarTenant )
 
 router.use( validarJWT )
+router.use(AsociacionModelos);
 
 router.get('/', list);
 router.get('/paginate', paginate);

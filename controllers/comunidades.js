@@ -3,7 +3,7 @@ const { generarJWT } = require('../helpers/jwt');
 
 const {getMyModel: getComunidadModel} = require('../models/Comunidad');
 const {getMyModel: getUsuarioModel} = require('../models/Usuario');
-const { closeConnection } = require('../database/config');
+const { closeConnection } = require('../database/mongodb');
 
 
 const formidable = require('formidable');
@@ -132,7 +132,7 @@ const myList = async(req, res = express.response) => {
         const page = req.query.page - 1
         
         const Usuario = await getUsuarioModel( tenant )
-        const user =  await Usuario.findById( uid );
+        const user =  await Usuario.findByPk( uid );
         
         const Comunidad = await getComunidadModel(tenant)
         const comunidades = await Comunidad.find(
@@ -183,7 +183,7 @@ const list = async(req, res = express.response) => {
         const page = req.query.page - 1
         
         const Usuario = await getUsuarioModel( tenant )
-        const user =  await Usuario.findById( uid );
+        const user =  await Usuario.findByPk( uid );
 
         const Comunidad = await getComunidadModel(tenant)
         const comunidades = await Comunidad.find(

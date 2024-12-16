@@ -2,7 +2,7 @@ const express = require('express');
 const { generarJWT } = require('../helpers/jwt');
 const {getMyModel: getVideotecaModel} = require('../models/Videoteca');
 const {getMyModel: getUsuarioModel} = require('../models/Usuario');
-const { closeConnection } = require('../database/config');
+const { closeConnection } = require('../database/mongodb');
 
 const create = async (req, res = express.response) => {
     const {uid, tenant} = req;
@@ -97,7 +97,7 @@ const myList = async(req, res = express.response) => {
         const page = req.query.page - 1
 
         const Usuario = await getUsuarioModel(tenant);
-        const user =  await Usuario.findById( uid );
+        const user =  await Usuario.findByPk( uid );
 
         const Videoteca = await getVideotecaModel(tenant);
         const videoteca = await Videoteca.find(
@@ -148,7 +148,7 @@ const list = async(req, res = express.response) => {
         const page = req.query.page - 1
         
         const Usuario = await getUsuarioModel(tenant);
-        const user =  await Usuario.findById( uid );
+        const user =  await Usuario.findByPk( uid );
 
         const Videoteca = await getVideotecaModel(tenant);
         const videoteca = await Videoteca.find(

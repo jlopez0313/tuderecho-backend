@@ -1,33 +1,22 @@
-const { Schema, model } = require("mongoose");
 const { getModel } = require("../database/config");
+const { DataTypes } = require("sequelize");
 
-const TagSchema = Schema({
-    name: {
-        type: String,
-        required: true
+const TagModel = {
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      notNull: { msg: "El nombre es obligatorio" },
     },
-},{
-    timestamps: true,
-    toJSON: {
-        virtuals: true
-    },
-    toObject: {
-        virtuals: true
-    }
-})
-
-TagSchema.method('toJSON', function() {
-    const {__V, _id, ...object} = this.toObject();
-    object.id = _id
-    return object;
-})
-
-const myModel = model('Tag', TagSchema)
+  },
+};
 
 const getMyModel = async (tenant) => {
-    return getModel('Tag', TagSchema, tenant)
-}
+  return getModel(tenant, "Tag", TagModel, {
+    paranoid: true,
+  });
+};
 
 module.exports = {
-    getMyModel
-}
+  getMyModel,
+};

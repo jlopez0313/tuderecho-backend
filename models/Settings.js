@@ -1,5 +1,5 @@
 const { Schema, model } = require("mongoose");
-const { getModel } = require("../database/config");
+const { getModel } = require("../database/mongodb");
 
 const SettingsSchema = Schema({
     title: {

@@ -26,7 +26,10 @@
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.8.3",
     "mongoose-autopopulate": "^1.0.0",
+    "mysql2": "^3.11.5",
     "nodemailer": "^6.9.0",
+    "pg": "^8.13.1",
+    "sequelize": "^6.37.5",
     "sharp": "^0.33.5",
     "socket.io": "^4.6.1",
     "vercel": "^29.1.1"

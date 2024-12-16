@@ -5,6 +5,7 @@ const  { check } = require('express-validator');
 const { list, madeBy, madeByMe, myList, find, create, update, remove, subscribe } = require('../controllers/conferencias');
 const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-token');
+const { AsociacionModelos } = require("../middlewares/Asociaciones");
 
 const { validarBodyParser } = require('../middlewares/validar-body-parser');
 router.use( validarBodyParser )
@@ -13,6 +14,7 @@ const { validarTenant } = require('../middlewares/validar-tenant');
 router.use( validarTenant )
 
 router.use( validarJWT )
+router.use(AsociacionModelos);
 
 router.get('/madeByMe', madeByMe);
 router.get('/madeBy/:id', madeBy);

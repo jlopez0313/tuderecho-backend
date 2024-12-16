@@ -1,111 +1,115 @@
-const { Schema, model } = require("mongoose");
-const autopopulate = require('mongoose-autopopulate');
+const { DataTypes } = require("sequelize");
 const { getModel } = require("../database/config");
+const bcrypt = require("bcryptjs");
+const { ObjectId } = require("mongodb");
 
-const UsuarioSchema = Schema({
-    rol: {
-        type: String,
-        required: true
+const UsuarioModel = {
+  id: {
+    type: DataTypes.CHAR(24),
+    primaryKey: true,
+    defaultValue: ObjectId().toString(),
+  },
+  rol: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      notNull: { msg: "El rol es requerido" },
     },
-    name: {
-        type: String,
-        required: true
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      notNull: { msg: "El nombre es requerido" },
     },
-    suscription: {
-        type: String,
-        required: true
+  },
+  suscription: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      notNull: { msg: "La suscripción es requerida" },
     },
-    days_left: {
-        type: Date,
-        required: true
+  },
+  days_left: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    validate: {
+      notNull: { msg: "Los días restantes son requeridos" },
     },
-    plan: {
-        type: Number,
-        required: true
+  },
+  plan: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    validate: {
+      notNull: { msg: "El plan es requerido" },
     },
-    storage: {
-        type: Schema.Types.Decimal128,
-        required: true
+  },
+  storage: {
+    type: DataTypes.DECIMAL(12, 2),
+    allowNull: false,
+    validate: {
+      notNull: { msg: "El almacenamiento es requerido" },
     },
-    total_storage: {
-        type: Schema.Types.Decimal128,
-        required: true
+  },
+  total_storage: {
+    type: DataTypes.DECIMAL(12, 2),
+    allowNull: false,
+    validate: {
+      notNull: { msg: "El almacenamiento total es requerido" },
     },
-    pts: {
-        type: Number,
-        required: true
+  },
+  pts: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    validate: {
+      notNull: { msg: "Los puntos son requeridos" },
     },
-    email: {
-        type: String,
-        required: true,
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+    validate: {
+      isEmail: { msg: "Debe ser un correo electrónico válido" },
     },
-    password: {
-        type: String,
-        required: true
+  },
+  password: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      notNull: { msg: "La contraseña es requerida" },
+      len: [6, 100], // Longitud mínima de contraseña
     },
-    estado: {
-        type: String,
-        required: true
+  },
+  estado: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      notNull: { msg: "El estado es requerido" },
     },
-    provider: {
-        type: String,
-        required: true
+  },
+  provider: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      notNull: { msg: "El proveedor es requerido" },
     },
-    isLogged: {
-        type: Boolean,
-        required: false,
-    },
-    token: {
-        type: String,
-        required: false,
-    },
-    comunidades: {
-        type: [Schema.Types.ObjectId],
-        ref: 'Comunidad',
-        required: false
-    },
-    conferencias: {
-        type: [Schema.Types.ObjectId],
-        ref: 'Conferencia',
-        required: false
-    },
-    videoteca: {
-        type: [Schema.Types.ObjectId],
-        ref: 'Videoteca',
-        required: false
-    },
-},{
-    timestamps: true,
-    toJSON: {
-        virtuals: true
-    },
-    toObject: {
-        virtuals: true
-    }
-})
+  },
+  isLogged: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  token: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+};
 
-UsuarioSchema.virtual('perfil', {
-    ref: 'Perfil',
-    localField: '_id',
-    foreignField: 'user',
-    justOne: true,
-    // autopopulate: true,
-})
-
-UsuarioSchema.method('toJSON', function() {
-    const {__V, _id, ...object} = this.toObject();
-    object.id = _id
-    return object;
-})
-
-UsuarioSchema.plugin(autopopulate);
-
-const myModel = model('Usuario', UsuarioSchema)
-
+// Función para obtener el modelo para un tenant específico
 const getMyModel = async (tenant) => {
-    return getModel('Usuario', UsuarioSchema, tenant)
-}
+  return getModel(tenant, "usuario", UsuarioModel);
+};
 
 module.exports = {
-    getMyModel
-}
+  getMyModel,
+};

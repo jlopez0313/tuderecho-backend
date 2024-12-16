@@ -1,71 +1,46 @@
-const { Schema, model } = require("mongoose");
-const autopopulate = require('mongoose-autopopulate');
+const { DataTypes } = require("sequelize");
 const { getModel } = require("../database/config");
 
-const ConferenciaSchema = Schema({
-    user: {
-        type: Schema.Types.ObjectId,
-        ref: 'Usuario',
-        autopopulate: true
+const conferenciaModel = {
+    user_id: {
+        type: DataTypes.CHAR(24),
     },
     titulo: {
-        type: String,
-        required: true
+        type: DataTypes.STRING,
+        allowNull: false
     },
     conferencista: {
-        type: String,
-        required: true
+        type: DataTypes.STRING,
+        allowNull: false
     },
     fecha: {
-        type: Date,
-        required: true
+        type: DataTypes.DATE,
+        allowNull: false
     },
     objetivo: {
-        type: String,
-        required: true
+        type: DataTypes.STRING,
+        allowNull: false
     },
     gratis: {
-        type: String,
-        required: true
+        type: DataTypes.STRING,
+        allowNull: false
     },
     precio: {
-        type: String,
+        type: DataTypes.STRING,
+        allowNull: true
     },
     archivo: {
-        type: String,
-        required: true
+        type: DataTypes.STRING,
+        allowNull: true
     },
     url: {
-        type: String,
-        required: true
+        type: DataTypes.STRING,
+        allowNull: false
     },
-    usuarios: {
-        type: [Schema.Types.ObjectId],
-        ref: 'Usuario',
-        required: false
-    },
-},{
-    timestamps: true,
-    toJSON: {
-        virtuals: true
-    },
-    toObject: {
-        virtuals: true
-    }
-})
-
-ConferenciaSchema.method('toJSON', function() {
-    const {__V, _id, ...object} = this.toObject();
-    object.id = _id
-    return object;
-})
-
-ConferenciaSchema.plugin(autopopulate);
-
-const myModel = model('Conferencia', ConferenciaSchema)
+}
 
 const getMyModel = async (tenant) => {
-    return getModel('Conferencia', ConferenciaSchema, tenant)
+    return getModel(tenant, 'Conferencia', conferenciaModel)
 }
 
 module.exports = {

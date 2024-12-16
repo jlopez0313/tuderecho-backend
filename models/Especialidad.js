@@ -1,33 +1,22 @@
-const { Schema, model } = require("mongoose");
+const { DataTypes } = require("sequelize");
 const { getModel } = require("../database/config");
 
-const EspecialidadSchema = Schema({
-    name: {
-        type: String,
-        require: true
+const EspecialidadModel = {
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      notNull: { msg: "El nombre es requerido" },
     },
-},{
-    timestamps: true,
-    toJSON: {
-        virtuals: true
-    },
-    toObject: {
-        virtuals: true
-    }
-})
-
-EspecialidadSchema.method('toJSON', function() {
-    const {__V, _id, ...object} = this.toObject();
-    object.id = _id
-    return object;
-})
-
-const myModel = model('Especialidad', EspecialidadSchema)
+  },
+};
 
 const getMyModel = async (tenant) => {
-    return getModel('Especialidad', EspecialidadSchema, tenant)
-}
+  return getModel(tenant, "Especialidad", EspecialidadModel, {
+    paranoid: true,
+  });
+};
 
 module.exports = {
-    getMyModel
-}
+  getMyModel,
+};

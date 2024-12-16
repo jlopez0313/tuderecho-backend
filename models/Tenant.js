@@ -1,4 +1,4 @@
-const { dbConnection } = require('../database/config');
+const { dbConnection } = require('../database/mongodb');
 const { Schema, model } = require('mongoose');
 const url = process.env.DB_CONNECTION;
 

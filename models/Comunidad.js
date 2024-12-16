@@ -1,6 +1,6 @@
 const { Schema, model } = require("mongoose");
 const autopopulate = require('mongoose-autopopulate');
-const { getModel } = require("../database/config");
+const { getModel } = require("../database/mongodb");
 
 const ComunidadSchema = Schema({
     user: {
